@@ -1,5 +1,6 @@
 
 from . import local_files
+from . import utils
 import jp_proxy_widget
 
 required_javascript_modules = [
@@ -24,6 +25,8 @@ def load_requirements(widget=None, silent=True, additional=()):
 
 class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
 
+    title = "Chart.js"
+
     def __init__(self, *pargs, **kwargs):
         super(ChartSuperClass, self).__init__(*pargs, **kwargs)
         load_requirements(self)
@@ -38,6 +41,20 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
             var ctx = canvas[0].getContext('2d');
             element.myDoughnut = new Chart(ctx, config);
         """, width=width, config=config)
+
+    def default_options(self):
+        true = True
+        options = utils.options(
+            responsive=true,
+            legend=dict(position="top"),
+            title=dict(display=true, text=self.title),
+            animation=dict(animateScale=true, animateRotate=true)
+        )
+        self.options = options
+        return options
+
+    def set_title(self, title):
+        self.options["title"]["text"] = title
 
 def example_donut():
     "just a test."
@@ -64,11 +81,11 @@ def example_donut():
     names = [nc[0] for nc in names_and_colors]
     true=True # convenience
 
-    config = dict(
+    config = utils.config(
         type="doughnut",
-        data= dict(
+        data= utils.data(
             datasets = [
-                dict(
+                utils.dataset(
                     label="My Dataset",
                     data=data,
                     backgroundColor=colors,
@@ -76,7 +93,7 @@ def example_donut():
             ],
             labels=names
         ),
-        options= dict(
+        options= utils.options(
             responsive=true,
             legend=dict(position="top"),
             title=dict(display=true, text="Dunkin Donut"),
