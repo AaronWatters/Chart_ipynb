@@ -5,10 +5,10 @@ version = "0.1.0"
 readme = open('README.md').read()
 
 setup(
-    name="jp_doodle",
-    packages=["jp_doodle"],
+    name="chart_ipynb",
+    packages=["chart_ipynb"],
     version=version,
-    description="Tools for drawing 2d and 3d interactive visualizations using Jupyter proxy widgets",
+    description="Simple jupyter widget wrappers for Chart.js chart types",
     long_description=readme,
     include_package_data=True,
     author="Aaron Watters",
