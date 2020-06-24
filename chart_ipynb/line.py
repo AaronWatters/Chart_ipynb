@@ -1,4 +1,4 @@
-from . import chart_framwork
+from . import chart_framework
 from . import utils
 import pandas as pd
 import numpy as np
@@ -31,16 +31,16 @@ class Line(chart_framework.ChartSuperClass):
         self.data = []
         self.colors = {}
         self.datasets = {}
-        self.dataset_label = []
+        self.dataset_name = []
     
     def add(self, label, datum):
         self.labels.append(label)
         self.data.append(datum)
 
-    def add_dataset(self, data, dataset_label, color):
-        self.dataset_label.append(dataset_label)
-        self.datasets[dataset_label] = data
-        self.colors[dataset_label] = color
+    def add_dataset(self, data, dataset_name, color):
+        self.dataset_name.append(dataset_name)
+        self.datasets[dataset_name] = data
+        self.colors[dataset_name] = color
 
     def setup(self, width=800):
         _datasets = []
@@ -52,8 +52,12 @@ class Line(chart_framework.ChartSuperClass):
                 d = utils.dataset(
                     label=_label,
                     data=_data,
-                    backgroundColor=utils.color_rgb[self.colors[_label]],
-                    fill = False
+                    backgroundColor=utils.color_rgb(self.colors[_label]),
+                    fill = False,
+                    type = 'line',
+                    pointRadius = 0,
+                    lineTension = 0,
+                    borderWidth = 2
                 )
                 _datasets.append(d)
         else:
@@ -88,8 +92,43 @@ def time_series_example(ticker_symbol, start, end, col):
     import datetime
     import time
 
-    result = Line()
-    result.set_title("Closing Prices")
+    options = utils.options(
+            animation = {
+                'duration': 0
+            },
+            scales = {
+                'xAxes': [{
+                    'display':True,
+                    'scaleLabel':{
+                        'display':True,
+                        'labelString':'Date'
+                    }
+                    ,'ticks': {
+                        'major': {
+                            'enabled': True,
+                            'fontStyle': 'bold'
+                        },
+                        'source': 'data',
+                        'autoSkip': True,
+                        'autoSkipPadding': 10,
+                        'maxRotation': 60,
+                    },
+                }],
+                'yAxes': [{
+                    'gridLines': {
+                        'drawBorder': False
+                    },
+                    'scaleLabel': {
+                        'display': True,
+                        'labelString': 'Closing price ($)'
+                    }
+                }]
+            },
+        )
+
+
+    result = Line(options = options)
+    # result.set_title("Closing Prices")
     api_key = '1JFowowyzc-FnajAsDkY'
     s_split = [int(d) for d in start.split('-')]
     e_split = [int(d) for d in end.split('-')]
@@ -100,8 +139,8 @@ def time_series_example(ticker_symbol, start, end, col):
     for i in range(len(ticker_symbol)):
             symbol = ticker_symbol[i]
             _dataset = web.DataReader(symbol,"quandl", start, end, api_key = api_key)
-            _data, _data_label = data_format(_dataset, col)
-            result.add_dataset(_data, _data_label, 'red')
+            _data, result.labels = data_format(_dataset, col)
+            result.add_dataset(_data, symbol, 'red')
     result.setup()
     return result
 
