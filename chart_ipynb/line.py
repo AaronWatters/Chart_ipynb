@@ -42,9 +42,9 @@ class Line(chart_framework.ChartSuperClass):
         self.datasets[dataset_name] = data
         self.colors[dataset_name] = color
 
-    def setup(self, width=800):
+    def setup(self, width=800, **other_arguments):
         _datasets = []
-        if len(self.datasets) > 1:
+        if len(self.datasets) >= 1:
             _data_list = list(self.datasets.items())
             for i in range(len(self.datasets)):
                 _label = _data_list[i][0]
@@ -52,7 +52,8 @@ class Line(chart_framework.ChartSuperClass):
                 d = utils.dataset(
                     label=_label,
                     data=_data,
-                    backgroundColor=utils.color_rgb(self.colors[_label]),
+                    backgroundColor=utils.color_rgb(self.colors[_label],0.5),
+                    borderColor = utils.color_rgb(self.colors[_label]),
                     fill = False,
                     type = 'line',
                     pointRadius = 0,
@@ -75,13 +76,18 @@ class Line(chart_framework.ChartSuperClass):
                 labels = self.labels,
             ),
             options=self.options,
+            **other_arguments,
         )
         self.initialize_chart(width, config)
 
 
 
 
-def time_series_example(ticker_symbol, start, end, col):
+def time_series_stock(ticker_symbol, start, end, col, colors=None, width=800,
+                        fontStyle = 'bold', 
+                        autoSkip=True, autoSkipPadding = 10, maxRotation = 60,
+                        **other_arguments
+                    ):
     '''
     ticker_symbol: stock symbol for company; a list or a string
     start, end: 'year-month-day'
@@ -91,6 +97,7 @@ def time_series_example(ticker_symbol, start, end, col):
     import pandas_datareader.data as web
     import datetime
     import time
+    import random
 
     options = utils.options(
             animation = {
@@ -106,12 +113,12 @@ def time_series_example(ticker_symbol, start, end, col):
                     ,'ticks': {
                         'major': {
                             'enabled': True,
-                            'fontStyle': 'bold'
+                            'fontStyle': fontStyle
                         },
                         'source': 'data',
-                        'autoSkip': True,
-                        'autoSkipPadding': 10,
-                        'maxRotation': 60,
+                        'autoSkip': autoSkip,
+                        'autoSkipPadding': autoSkipPadding,
+                        'maxRotation': maxRotation,
                     },
                 }],
                 'yAxes': [{
@@ -120,7 +127,7 @@ def time_series_example(ticker_symbol, start, end, col):
                     },
                     'scaleLabel': {
                         'display': True,
-                        'labelString': 'Closing price ($)'
+                        'labelString': col.capitalize() + ' price ($)'
                     }
                 }]
             },
@@ -128,7 +135,6 @@ def time_series_example(ticker_symbol, start, end, col):
 
 
     result = Line(options = options)
-    # result.set_title("Closing Prices")
     api_key = '1JFowowyzc-FnajAsDkY'
     s_split = [int(d) for d in start.split('-')]
     e_split = [int(d) for d in end.split('-')]
@@ -136,12 +142,14 @@ def time_series_example(ticker_symbol, start, end, col):
     end = datetime.datetime(e_split[0],e_split[1],e_split[2])
     if isinstance(ticker_symbol, str):
         ticker_symbol = [ticker_symbol]
+    if colors is None:
+        colors = [random.choice(utils.color_name) for i in range(len(ticker_symbol))]
     for i in range(len(ticker_symbol)):
             symbol = ticker_symbol[i]
             _dataset = web.DataReader(symbol,"quandl", start, end, api_key = api_key)
             _data, result.labels = data_format(_dataset, col)
-            result.add_dataset(_data, symbol, 'red')
-    result.setup()
+            result.add_dataset(_data, symbol, colors[i])
+    result.setup(width, **other_arguments)
     return result
 
 
