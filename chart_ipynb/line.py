@@ -4,18 +4,23 @@ import pandas as pd
 import numpy as np
 
 
-def data_format(dataset, val_col):
+def data_format(dataset, val_col, data_provide = False, date_col=None):
         """
         dataset: pd.DataFrame
         val_col: the column name for the target value. e.g 'Close'
         """
-        data = dataset[val_col]
+        if not data_provide:
+            date_col = 'Date'
+        else:
+            if date_col is None:
+                print('please specify the date column')
+                raise
         idx_reset_df = dataset.reset_index()
-        if 'Date' not in idx_reset_df.columns:
-            return 'please rename the date columns to "Date"'
-        sort_df = idx_reset_df.sort_values(by='Date')
-        sort_df['Date']=sort_df['Date'].astype(str)
-        return  list(sort_df[val_col]), list(sort_df['Date'])
+        data = idx_reset_df[[val_col, date_col]]
+        sort_df = idx_reset_df.sort_values(by=date_col)
+        sort_df[date_col]=sort_df[date_col].astype(str)
+
+        return  list(sort_df[val_col]), list(sort_df[date_col])
 
 
 class Line(chart_framework.ChartSuperClass):
@@ -109,7 +114,9 @@ class Line(chart_framework.ChartSuperClass):
 
 
 
-def time_series_stock(ticker_symbol, start, end, col, colors=None, 
+def time_series_stock(ticker_symbol, val_col, start=None, end=None, colors=None, 
+                        data_provide = False, input_dataset = None, date_col = None,
+                        website = None, api_key = None, 
                         multi_axis = False,
                         width=800,
                         fontStyle = 'bold', 
@@ -118,21 +125,33 @@ def time_series_stock(ticker_symbol, start, end, col, colors=None,
                     ):
     '''
     ticker_symbol: stock symbol for company; a list or a string
+                    if self provide data, should be the name list or string of the dataset
     start, end: 'year-month-day'
-    col: price type
+    val_col: price type
+    colors: colors for dataset; one for each
+    multi_axis: only for two datasets
+    data_provide: if or not self provide data
+    website: the address to get data
+    api_key: api key to access the data at website
+    input_dataset: a list
     '''
     import pandas_datareader
     import pandas_datareader.data as web
     import datetime
     import time
     import random
-
-    api_key = '1JFowowyzc-FnajAsDkY'
-    s_split = [int(d) for d in start.split('-')]
-    e_split = [int(d) for d in end.split('-')]
-    start = datetime.datetime(s_split[0],s_split[1],s_split[2])
-    end = datetime.datetime(e_split[0],e_split[1],e_split[2])
-
+    
+    if not data_provide:   
+        if website == 'quandl' and api_key is None:
+            api_key = '1JFowowyzc-FnajAsDkY'
+        s_split = [int(d) for d in start.split('-')]
+        e_split = [int(d) for d in end.split('-')]
+        start = datetime.datetime(s_split[0],s_split[1],s_split[2])
+        end = datetime.datetime(e_split[0],e_split[1],e_split[2])
+    else:
+        if input_dataset is None or date_col is None:
+            print('please enter your data and specify the date column')
+            raise
 
     if not multi_axis:
         options = utils.options(
@@ -164,7 +183,7 @@ def time_series_stock(ticker_symbol, start, end, col, colors=None,
                         },
                         'scaleLabel': {
                             'display': True,
-                            'labelString': col.capitalize() + ' price ($)'
+                            'labelString': val_col.capitalize() + ' price ($)'
                         }
                     }]
                 },
@@ -206,7 +225,7 @@ def time_series_stock(ticker_symbol, start, end, col, colors=None,
                         },
                         'scaleLabel': {
                             'display': True,
-                            'labelString': col.capitalize() + ' price ($)'
+                            'labelString': val_col.capitalize() + ' price ($)'
                         }
                     },{
                         'type': 'linear',
@@ -218,7 +237,7 @@ def time_series_stock(ticker_symbol, start, end, col, colors=None,
                         },
                         'scaleLabel': {
                             'display': True,
-                            'labelString': col.capitalize() + ' price ($)'
+                            'labelString': val_col.capitalize() + ' price ($)'
                         }
                     }]
                 },
@@ -231,9 +250,16 @@ def time_series_stock(ticker_symbol, start, end, col, colors=None,
         colors = [random.choice(utils.color_name) for i in range(len(ticker_symbol))]
     for i in range(len(ticker_symbol)):
             symbol = ticker_symbol[i]
-            _dataset = web.DataReader(symbol,"quandl", start, end, api_key = api_key)
-            _data, result.labels = data_format(_dataset, col)
+            _dataset = None
+            if not data_provide:
+                _dataset = web.DataReader(symbol, website, start, end, api_key = api_key)
+            else:
+                _dataset = input_dataset[i]
+            _data, result.labels = data_format(_dataset, val_col, 
+                                                data_provide = data_provide, 
+                                                date_col=date_col)
             result.add_dataset(_data, symbol, colors[i])
+
     result.setup(width, multi_axis = multi_axis, **other_arguments) 
         
 
