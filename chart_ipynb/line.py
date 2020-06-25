@@ -26,6 +26,7 @@ def data_format(dataset, val_col, data_provide = False, date_col=None):
 class Line(chart_framework.ChartSuperClass):
 
     title = "Line Chart"
+    chart_type = 'line'
 
     def __init__(self, options=None, *pargs, **kwargs):
         super(Line, self).__init__(*pargs, **kwargs)
@@ -61,10 +62,10 @@ class Line(chart_framework.ChartSuperClass):
                         backgroundColor=utils.color_rgb(self.colors[_label],0.5),
                         borderColor = utils.color_rgb(self.colors[_label]),
                         fill = False,
-                        type = 'line',
+                        type = self.chart_type,
                         pointRadius = 0,
                         lineTension = 0,
-                        borderWidth = 2,
+                        borderWidth = 1,
                         **others,
                     )
                     _datasets.append(d)
@@ -82,10 +83,10 @@ class Line(chart_framework.ChartSuperClass):
                         backgroundColor=utils.color_rgb(self.colors[_label],0.5),
                         borderColor = utils.color_rgb(self.colors[_label]),
                         fill = False,
-                        type = 'line',
+                        type = self.chart_type,
                         pointRadius = 0,
                         lineTension = 0,
-                        borderWidth = 2,
+                        borderWidth = 1,
                         **others,
                     )
                     _datasets.append(d)
@@ -96,6 +97,7 @@ class Line(chart_framework.ChartSuperClass):
                         label="My dataset",
                         data=self.data,
                         backgroundColor=self.colors,
+                        type = self.chart_type,
                         **others,
                     )
             ] 
@@ -200,6 +202,9 @@ def time_series_lineChart(ticker_symbol, val_col, start=None, end=None, colors=N
         if isinstance(ticker_symbol, str) or len(ticker_symbol) != 2:
             raise 'multi axis only applies to two datasets'
 
+        axis_label_1 = ticker_symbol[0] + ' : ' + axis_label
+        axis_label_2 = ticker_symbol[1] + ' : ' + axis_label
+
         options = utils.options(
                 responsive = True,
                 animation = {
@@ -233,7 +238,7 @@ def time_series_lineChart(ticker_symbol, val_col, start=None, end=None, colors=N
                         },
                         'scaleLabel': {
                             'display': True,
-                            'labelString': axis_label
+                            'labelString': axis_label_1
                         }
                     },{
                         'type': 'linear',
@@ -241,11 +246,12 @@ def time_series_lineChart(ticker_symbol, val_col, start=None, end=None, colors=N
                         'position': 'right',
                         'id': 'y-axis-2',
                         'gridLines': {
+                            'drawBorder': False,
                             'drawOnChartArea': False
                         },
                         'scaleLabel': {
                             'display': True,
-                            'labelString': axis_label
+                            'labelString': axis_label_2
                         }
                     }]
                 },
