@@ -114,7 +114,7 @@ class Line(chart_framework.ChartSuperClass):
 
 
 
-def time_series_stock(ticker_symbol, val_col, start=None, end=None, colors=None, 
+def time_series_lineChart(ticker_symbol, val_col, start=None, end=None, colors=None, 
                         data_provide = False, input_dataset = None, date_col = None,
                         website = None, api_key = None, 
                         multi_axis = False,
