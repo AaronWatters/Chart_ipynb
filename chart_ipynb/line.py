@@ -42,25 +42,47 @@ class Line(chart_framework.ChartSuperClass):
         self.datasets[dataset_name] = data
         self.colors[dataset_name] = color
 
-    def setup(self, width=800, **other_arguments):
+    def set_dataset(self, multi_axis = False, **others):
         _datasets = []
         if len(self.datasets) >= 1:
-            _data_list = list(self.datasets.items())
-            for i in range(len(self.datasets)):
-                _label = _data_list[i][0]
-                _data = _data_list[i][1]
-                d = utils.dataset(
-                    label=_label,
-                    data=_data,
-                    backgroundColor=utils.color_rgb(self.colors[_label],0.5),
-                    borderColor = utils.color_rgb(self.colors[_label]),
-                    fill = False,
-                    type = 'line',
-                    pointRadius = 0,
-                    lineTension = 0,
-                    borderWidth = 2
-                )
-                _datasets.append(d)
+            if not multi_axis:
+                _data_list = list(self.datasets.items())
+                for i in range(len(self.datasets)):
+                    _label = _data_list[i][0]
+                    _data = _data_list[i][1]
+                    d = utils.dataset(
+                        label=_label,
+                        data=_data,
+                        backgroundColor=utils.color_rgb(self.colors[_label],0.5),
+                        borderColor = utils.color_rgb(self.colors[_label]),
+                        fill = False,
+                        type = 'line',
+                        pointRadius = 0,
+                        lineTension = 0,
+                        borderWidth = 2
+                    )
+                    _datasets.append(d)
+            else:
+                if len(self.datasets) != 2:
+                    raise 'multi axis only applies to two datasets'
+                _data_list = list(self.datasets.items())
+                for i in range(len(self.datasets)):
+                    _label = _data_list[i][0]
+                    _data = _data_list[i][1]
+                    d = utils.dataset(
+                        label=_label,
+                        data=_data,
+                        yAxisID = 'y-axis-'+str(i+1),
+                        backgroundColor=utils.color_rgb(self.colors[_label],0.5),
+                        borderColor = utils.color_rgb(self.colors[_label]),
+                        fill = False,
+                        type = 'line',
+                        pointRadius = 0,
+                        lineTension = 0,
+                        borderWidth = 2
+                    )
+                    _datasets.append(d)
+
         else:
             _datasets = [
                 utils.dataset(
@@ -69,6 +91,10 @@ class Line(chart_framework.ChartSuperClass):
                         backgroundColor=self.colors
                     )
             ] 
+        return _datasets
+
+    def setup(self, width=800, multi_axis = False, **other_arguments): 
+        _datasets = self.set_dataset(multi_axis = multi_axis)
         config = utils.config(
             type="line",
             data=utils.data(
@@ -83,7 +109,9 @@ class Line(chart_framework.ChartSuperClass):
 
 
 
-def time_series_stock(ticker_symbol, start, end, col, colors=None, width=800,
+def time_series_stock(ticker_symbol, start, end, col, colors=None, 
+                        multi_axis = False,
+                        width=800,
                         fontStyle = 'bold', 
                         autoSkip=True, autoSkipPadding = 10, maxRotation = 60,
                         **other_arguments
@@ -99,47 +127,104 @@ def time_series_stock(ticker_symbol, start, end, col, colors=None, width=800,
     import time
     import random
 
-    options = utils.options(
-            animation = {
-                'duration': 0
-            },
-            scales = {
-                'xAxes': [{
-                    'display':True,
-                    'scaleLabel':{
-                        'display':True,
-                        'labelString':'Date'
-                    }
-                    ,'ticks': {
-                        'major': {
-                            'enabled': True,
-                            'fontStyle': fontStyle
-                        },
-                        'source': 'data',
-                        'autoSkip': autoSkip,
-                        'autoSkipPadding': autoSkipPadding,
-                        'maxRotation': maxRotation,
-                    },
-                }],
-                'yAxes': [{
-                    'gridLines': {
-                        'drawBorder': False
-                    },
-                    'scaleLabel': {
-                        'display': True,
-                        'labelString': col.capitalize() + ' price ($)'
-                    }
-                }]
-            },
-        )
-
-
-    result = Line(options = options)
     api_key = '1JFowowyzc-FnajAsDkY'
     s_split = [int(d) for d in start.split('-')]
     e_split = [int(d) for d in end.split('-')]
     start = datetime.datetime(s_split[0],s_split[1],s_split[2])
     end = datetime.datetime(e_split[0],e_split[1],e_split[2])
+
+
+    if not multi_axis:
+        options = utils.options(
+                responsive = True,
+                animation = {
+                    'duration': 0
+                },
+                scales = {
+                    'xAxes': [{
+                        'display':True,
+                        'scaleLabel':{
+                            'display':True,
+                            'labelString':'Date'
+                        }
+                        ,'ticks': {
+                            'major': {
+                                'enabled': True,
+                                'fontStyle': fontStyle
+                            },
+                            'source': 'data',
+                            'autoSkip': autoSkip,
+                            'autoSkipPadding': autoSkipPadding,
+                            'maxRotation': maxRotation,
+                        },
+                    }],
+                    'yAxes': [{
+                        'gridLines': {
+                            'drawBorder': False
+                        },
+                        'scaleLabel': {
+                            'display': True,
+                            'labelString': col.capitalize() + ' price ($)'
+                        }
+                    }]
+                },
+            )
+    else:
+        if isinstance(ticker_symbol, str) or len(ticker_symbol) != 2:
+            raise 'multi axis only applies to two datasets'
+
+        options = utils.options(
+                responsive = True,
+                animation = {
+                    'duration': 0
+                },
+                scales = {
+                    'xAxes': [{
+                        'display':True,
+                        'scaleLabel':{
+                            'display':True,
+                            'labelString':'Date'
+                        }
+                        ,'ticks': {
+                            'major': {
+                                'enabled': True,
+                                'fontStyle': fontStyle
+                            },
+                            'source': 'data',
+                            'autoSkip': autoSkip,
+                            'autoSkipPadding': autoSkipPadding,
+                            'maxRotation': maxRotation,
+                        },
+                    }],
+                    'yAxes': [{
+                        'type': 'linear',
+                        'display': True,
+                        'position': 'left',
+                        'id': 'y-axis-1',
+                        'gridLines': {
+                            'drawBorder': False
+                        },
+                        'scaleLabel': {
+                            'display': True,
+                            'labelString': col.capitalize() + ' price ($)'
+                        }
+                    },{
+                        'type': 'linear',
+                        'display': True,
+                        'position': 'right',
+                        'id': 'y-axis-2',
+                        'gridLines': {
+                            'drawOnChartArea': False
+                        },
+                        'scaleLabel': {
+                            'display': True,
+                            'labelString': col.capitalize() + ' price ($)'
+                        }
+                    }]
+                },
+            )
+
+    result = Line(options = options)
     if isinstance(ticker_symbol, str):
         ticker_symbol = [ticker_symbol]
     if colors is None:
@@ -149,7 +234,9 @@ def time_series_stock(ticker_symbol, start, end, col, colors=None, width=800,
             _dataset = web.DataReader(symbol,"quandl", start, end, api_key = api_key)
             _data, result.labels = data_format(_dataset, col)
             result.add_dataset(_data, symbol, colors[i])
-    result.setup(width, **other_arguments)
+    result.setup(width, multi_axis = multi_axis, **other_arguments) 
+        
+
     return result
 
 
