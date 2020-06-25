@@ -64,7 +64,8 @@ class Line(chart_framework.ChartSuperClass):
                         type = 'line',
                         pointRadius = 0,
                         lineTension = 0,
-                        borderWidth = 2
+                        borderWidth = 2,
+                        **others,
                     )
                     _datasets.append(d)
             else:
@@ -84,7 +85,8 @@ class Line(chart_framework.ChartSuperClass):
                         type = 'line',
                         pointRadius = 0,
                         lineTension = 0,
-                        borderWidth = 2
+                        borderWidth = 2,
+                        **others,
                     )
                     _datasets.append(d)
 
@@ -93,13 +95,16 @@ class Line(chart_framework.ChartSuperClass):
                 utils.dataset(
                         label="My dataset",
                         data=self.data,
-                        backgroundColor=self.colors
+                        backgroundColor=self.colors,
+                        **others,
                     )
             ] 
         return _datasets
 
-    def setup(self, width=800, multi_axis = False, **other_arguments): 
-        _datasets = self.set_dataset(multi_axis = multi_axis)
+    def setup(self, width=800, multi_axis = False, _dataset = None, 
+                **other_arguments): 
+        if _dataset is None:
+            _datasets = self.set_dataset(multi_axis = multi_axis)
         config = utils.config(
             type="line",
             data=utils.data(
