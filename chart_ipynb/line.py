@@ -117,7 +117,7 @@ class Line(chart_framework.ChartSuperClass):
 def time_series_lineChart(ticker_symbol, val_col, start=None, end=None, colors=None, 
                         data_provide = False, input_dataset = None, date_col = None,
                         website = None, api_key = None, 
-                        multi_axis = False,
+                        multi_axis = False, axis_label = None,
                         width=800,
                         fontStyle = 'bold', 
                         autoSkip=True, autoSkipPadding = 10, maxRotation = 60,
@@ -153,6 +153,9 @@ def time_series_lineChart(ticker_symbol, val_col, start=None, end=None, colors=N
             print('please enter your data and specify the date column')
             raise
 
+    if axis_label is None:
+        axis_label = val_col.capitalize()
+
     if not multi_axis:
         options = utils.options(
                 responsive = True,
@@ -183,7 +186,7 @@ def time_series_lineChart(ticker_symbol, val_col, start=None, end=None, colors=N
                         },
                         'scaleLabel': {
                             'display': True,
-                            'labelString': val_col.capitalize() + ' price ($)'
+                            'labelString': axis_label
                         }
                     }]
                 },
@@ -225,7 +228,7 @@ def time_series_lineChart(ticker_symbol, val_col, start=None, end=None, colors=N
                         },
                         'scaleLabel': {
                             'display': True,
-                            'labelString': val_col.capitalize() + ' price ($)'
+                            'labelString': axis_label
                         }
                     },{
                         'type': 'linear',
@@ -237,7 +240,7 @@ def time_series_lineChart(ticker_symbol, val_col, start=None, end=None, colors=N
                         },
                         'scaleLabel': {
                             'display': True,
-                            'labelString': val_col.capitalize() + ' price ($)'
+                            'labelString': axis_label
                         }
                     }]
                 },
