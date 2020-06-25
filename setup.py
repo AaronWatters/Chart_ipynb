@@ -21,9 +21,7 @@ setup(
         "pandas",
         "pandas_datareader", 
         "pillow", 
-        #"psutil",
         "imageio",
-        #"sklearn",
         "jupyter-ui-poll",
         ],
     license="MIT"
