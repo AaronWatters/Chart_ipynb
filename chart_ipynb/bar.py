@@ -22,11 +22,7 @@ class Bar(chart_setup.Chart_init):
                                           yAxes=dict(stacked = stacked))
             )
         self.options = options
-        self.labels = []
-        self.data = []
-        self.colors = []
-        self.datasets = []
-        self.dataset_name = []
+        self.reset()
 
 
     

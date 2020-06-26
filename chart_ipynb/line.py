@@ -15,11 +15,7 @@ class Line(chart_setup.Chart_init):
         if options is None:
             options = self.default_options()
         self.options = options
-        self.labels = []
-        self.data = []
-        self.colors = []
-        self.datasets = []
-        self.dataset_name = []
+        self.reset()
 
 
     def default_options(self):

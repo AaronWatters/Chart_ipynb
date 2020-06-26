@@ -20,9 +20,10 @@ class Chart_init(chart_framework.ChartSuperClass):
         self.datasets = []
         self.dataset_name = []
     
-    def add(self, label, datum):
+    def add(self, label, datum, color):
         self.labels.append(label)
         self.data.append(datum)
+        self.colors.append(color)
 
     def add_dataset(self, data_x, data_y, dataset_name, color = None, 
                     backgroundColor = None, borderColor = None, 
@@ -61,7 +62,7 @@ class Chart_init(chart_framework.ChartSuperClass):
         """
         if need more settings when single data is added
         """
-        self.add_dataset(self.data, self.labels, label, 
+        self.add_dataset(self.labels, self.data, label, 
                         backgroundColor = backgroundColor, 
                         borderColor = borderColor, 
                         fill = fill,
@@ -70,7 +71,7 @@ class Chart_init(chart_framework.ChartSuperClass):
 
     def setup(self, width=800, **other_arguments): 
         if not self.datasets:
-            self.add_dataset(self.data, self.labels, "My dataset")
+            self.add_dataset(self.labels, self.data, "My dataset")
         config = utils.config(
             type=self.chart_type,
             data=utils.data(
@@ -81,3 +82,10 @@ class Chart_init(chart_framework.ChartSuperClass):
             **other_arguments,
         )
         self.initialize_chart(width, config)
+
+    def reset(self):
+        self.labels = []
+        self.data = []
+        self.colors = []
+        self.datasets = []
+        self.dataset_name = []
