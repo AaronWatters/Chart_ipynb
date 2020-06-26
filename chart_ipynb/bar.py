@@ -7,6 +7,7 @@ import numpy as np
 class Bar(line.Line):
     
     title = "Bar Chart"
+    chart_type = 'line'
 
     def __init__(self, options=None, stacked = False, *pargs, **kwargs):
         super(Bar, self).__init__(*pargs, **kwargs)
