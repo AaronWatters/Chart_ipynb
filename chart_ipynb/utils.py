@@ -72,6 +72,28 @@ def dataset(
         **other_arguments,
     )
 
+def scales(
+        xAxes = None,
+        yAxes = None,
+        **other_arguments,
+    ):
+    return clean_dict(
+        xAxes = xAxes,
+        yAxes = yAxes,
+        **other_arguments,
+    )
+
+def axes(
+        display = True,
+        scaleLabel = None,
+        **other_arguments,
+    ):
+    return clean_dict(
+        display = display,
+        scaleLabel = scaleLabel,
+        **other_arguments,
+    )
+
 color_name = ['aliceblue', 'antiquewhite', 'aqua', 
     'aquamarine', 'azure', 'beige', 'bisque', 
     'black', 'blanchedalmond', 'blue', 'blueviolet', 
@@ -109,12 +131,7 @@ color_name = ['aliceblue', 'antiquewhite', 'aqua',
     'turquoise', 'violet', 'wheat', 'white', 
     'whitesmoke', 'yellow', 'yellowgreen'
     ]
-
-def color_rgb(color_name, opaque=1):
-    if not isinstance(color_name,str):
-        return 
-    color_name = color_name.lower()
-    colorName = {
+colorName = {
         "aliceblue": [240, 248, 255],
         "antiquewhite": [250, 235, 215],
         "aqua": [0, 255, 255],
@@ -264,6 +281,11 @@ def color_rgb(color_name, opaque=1):
         "yellow": [255, 255, 0],
         "yellowgreen": [154, 205, 50]
     }
+
+def color_rgb(color_name, opaque=1):
+    if not isinstance(color_name,str):
+        return 
+    color_name = color_name.lower()
     if color_name not in colorName:
         return 
     [r, g, b] = colorName[color_name]
