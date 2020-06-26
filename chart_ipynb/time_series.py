@@ -1,4 +1,5 @@
 from . import chart_framework
+from . import chart_setup
 from . import utils, line, bar
 import pandas as pd
 import numpy as np
@@ -22,10 +23,17 @@ def data_format(dataset, val_col, data_provide = False, date_col=None):
 
         return  list(sort_df[val_col]), list(sort_df[date_col])
 
-def default_axis(axis, axis_label = None, multi_axis = False, multi_axis_name = None):
+def default_axis(axis, axis_label = None, multi_axis = False, multi_axis_name = None, stacked = False):
+        axis_labels = {'x': 'x', 'y': 'y'}
+        if axis_label is None:
+            axis_label = axis_labels[axis]
+        if stacked:
+            return utils.axes(
+                display=True,
+                scaleLabel = dict(display = True, labelString = axis_label),
+                stacked=True
+            )
         if axis == 'x':
-            if axis_label is None:
-                axis_label = 'x'
             return utils.axes(
                 display=True,
                 scaleLabel = dict(display = True, labelString = axis_label),
@@ -34,15 +42,10 @@ def default_axis(axis, axis_label = None, multi_axis = False, multi_axis_name = 
                             'enabled': True,
                             'fontStyle': 'bold'
                             },
-                    source = 'data',
-                    autoSkip = True,
-                    autoSkipPadding = 10,
-                    maxRotation =  60
+                    source = 'data'
                 ),
             )
         else:
-            if axis_label is None:
-                axis_label = 'y'
             if multi_axis:
                 if multi_axis_name is None:
                     multi_axis_name = ['dataset1', 'dataset2']
@@ -88,24 +91,37 @@ def default_axis(axis, axis_label = None, multi_axis = False, multi_axis_name = 
 
 def ts_default_option(xAxes = None, yAxes = None, 
                        xAxes_name = None, yAxes_name = None,
-                       multi_axis = False, multi_axis_name = None):
+                       multi_axis = False, multi_axis_name = None,
+                       stacked = False):
         if xAxes is None:
             if xAxes_name is None:
                 xAxes_name = 'Date'
-            xAxes = default_axis('x', axis_label = xAxes_name)
+            xAxes = default_axis('x', axis_label = xAxes_name, stacked = stacked)
         if yAxes is None:
-            yAxes = default_axis('y', axis_label = yAxes_name, multi_axis = multi_axis, multi_axis_name = multi_axis_name)
+            yAxes = default_axis('y', axis_label = yAxes_name, 
+                                 multi_axis = multi_axis, multi_axis_name = multi_axis_name, stacked = stacked)
         _option = utils.options(
                         responsive=True,
                         animation = dict(duration=0),
                         scales = { 'xAxes': xAxes, 'yAxes': yAxes}
                 )
+        if stacked:
+            _option = utils.options(
+                        responsive=True,
+                        animation = dict(duration=0),
+                        tooltips= {
+                            'mode': 'index',
+                            'intersect': False
+                        },
+                        scales = { 'xAxes': xAxes, 'yAxes': yAxes}
+                )
+                
         return _option
 
-def time_series_Chart(chart_type, ticker_symbol, val_col, date_col = None, start=None, end=None, 
+def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, start=None, end=None, 
                             data_provide = False, input_dataset = None,
                             website = None, api_key = None, 
-                            multi_axis = False, axis_label = None,
+                            multi_axis = False, axis_label = None, stacked = False,
                             options = None, xAxes = None, yAxes = None,
                             colors=None, backgroundColor = None, borderColor = None, 
                             fill = False,
@@ -167,11 +183,12 @@ def time_series_Chart(chart_type, ticker_symbol, val_col, date_col = None, start
     if options is None:
         options = ts_default_option(xAxes = xAxes, yAxes = yAxes, 
                                     yAxes_name = val_col, 
-                                    multi_axis = multi_axis, multi_axis_name=ticker_symbol)
-    
+                                    multi_axis = multi_axis, multi_axis_name=ticker_symbol, stacked = stacked)
+
     charts = {'line': line.Line(options = options), 
-              'bar': bar.Bar(options = options)}
-    result = charts[chart_type]
+              'bar': bar.Bar(options = options, stacked=stacked)}
+    result = charts[_chart_type]
+
     for i in range(len(ticker_symbol)):
             symbol = ticker_symbol[i]
             _dataset = None
