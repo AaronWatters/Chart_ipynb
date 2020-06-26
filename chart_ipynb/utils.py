@@ -86,11 +86,13 @@ def scales(
 def axes(
         display = True,
         scaleLabel = None,
+        stacked = False,
         **other_arguments,
     ):
     return clean_dict(
         display = display,
         scaleLabel = scaleLabel,
+        stacked = stacked,
         **other_arguments,
     )
 

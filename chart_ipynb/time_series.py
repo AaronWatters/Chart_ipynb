@@ -28,11 +28,7 @@ def default_axis(axis, axis_label = None, multi_axis = False, multi_axis_name = 
         if axis_label is None:
             axis_label = axis_labels[axis]
         if stacked:
-            return utils.axes(
-                display=True,
-                scaleLabel = dict(display = True, labelString = axis_label),
-                stacked=True
-            )
+            return {'stacked': True}
         if axis == 'x':
             return utils.axes(
                 display=True,
@@ -93,6 +89,7 @@ def ts_default_option(xAxes = None, yAxes = None,
                        xAxes_name = None, yAxes_name = None,
                        multi_axis = False, multi_axis_name = None,
                        stacked = False):
+
         if xAxes is None:
             if xAxes_name is None:
                 xAxes_name = 'Date'
@@ -108,12 +105,18 @@ def ts_default_option(xAxes = None, yAxes = None,
         if stacked:
             _option = utils.options(
                         responsive=True,
-                        animation = dict(duration=0),
                         tooltips= {
                             'mode': 'index',
                             'intersect': False
                         },
-                        scales = { 'xAxes': xAxes, 'yAxes': yAxes}
+                        scales = {
+                                    'xAxes': [{
+                                        'stacked': True,
+                                    }],
+                                    'yAxes': [{
+                                        'stacked': True
+                                    }]
+                                }
                 )
                 
         return _option
@@ -185,9 +188,12 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
                                     yAxes_name = val_col, 
                                     multi_axis = multi_axis, multi_axis_name=ticker_symbol, stacked = stacked)
 
-    charts = {'line': line.Line(options = options), 
-              'bar': bar.Bar(options = options, stacked=stacked)}
-    result = charts[_chart_type]
+    result = None
+    if _chart_type == 'line':
+        result = line.Line(options = options)
+    if _chart_type == 'bar':
+        result = bar.Bar(options = options, stacked=stacked)
+
 
     for i in range(len(ticker_symbol)):
             symbol = ticker_symbol[i]
@@ -210,14 +216,19 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
                                     lineTension = 0,
                                     borderWidth = 1)
             else:
-                result.add_dataset(result.labels, _data, symbol, color = colors[i],
+                if stacked:
+                    result.add_dataset(result.labels, _data, symbol, color = colors[i],
                                     backgroundColor = backgroundColor[i], 
-                                    borderColor = borderColor[i], 
-                                    fill = fill,
-                                    type = result.chart_type,
-                                    pointRadius = 0,
-                                    lineTension = 0,
-                                    borderWidth = 1)
+                                    borderColor = borderColor[i])
+                else:
+                    result.add_dataset(result.labels, _data, symbol, color = colors[i],
+                                        backgroundColor = backgroundColor[i], 
+                                        borderColor = borderColor[i], 
+                                        fill = fill,
+                                        type = result.chart_type,
+                                        pointRadius = 0,
+                                        lineTension = 0,
+                                        borderWidth = 1)
     result.setup(width, **other_arguments) 
 
     return result
