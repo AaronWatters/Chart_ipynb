@@ -23,7 +23,6 @@ setup(
         "pillow", 
         "imageio",
         "jupyter-ui-poll",
-        "pytz",
         ],
     license="MIT"
 )
