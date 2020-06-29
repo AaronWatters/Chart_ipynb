@@ -10,8 +10,8 @@ class PolarArea(chart_setup.Chart_init):
     title = 'Polar Area Chart'
     chart_type = 'polarArea'
 
-    def __init__(self, options=None, stacked = False, *pargs, **kwargs):
-        super(PolarArea, self).__init__(*pargs, **kwargs)
+    def __init__(self, options=None, title = None,  *pargs, **kwargs):
+        super(PolarArea, self).__init__(title=title, *pargs, **kwargs)
         if options is None:
             self.options = utils.options(
 					responsive=True,

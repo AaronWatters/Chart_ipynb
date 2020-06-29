@@ -291,4 +291,4 @@ def color_rgb(color_name, opaque=1):
     if color_name not in colorName:
         return 
     [r, g, b] = colorName[color_name]
-    return 'rgb(%d, %d, %d, %d)' %(r, g, b, opaque)
+    return 'rgb(%d, %d, %d, %f)' %(r, g, b, opaque)

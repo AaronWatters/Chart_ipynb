@@ -10,8 +10,8 @@ class Radar(chart_setup.Chart_init):
     title = 'Radar Chart'
     chart_type = 'radar'
 
-    def __init__(self, options=None, stacked = False, *pargs, **kwargs):
-        super(Radar, self).__init__(*pargs, **kwargs)
+    def __init__(self, options=None, title = None, *pargs, **kwargs):
+        super(Radar, self).__init__(title = title, *pargs, **kwargs)
         if options is None:
             self.options = utils.options(
 					responsive=True,

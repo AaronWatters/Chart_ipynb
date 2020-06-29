@@ -35,7 +35,9 @@ class Chart_init(chart_framework.ChartSuperClass):
         import random
         
         if color is None:
-            if backgroundColor is not None:
+            if not self.colors:
+                color = self.colors
+            elif backgroundColor is not None:
                 color = backgroundColor
             elif borderColor is not None:
                 color = borderColor
@@ -47,7 +49,8 @@ class Chart_init(chart_framework.ChartSuperClass):
             borderColor = color
         
         self.dataset_name.append(dataset_name)
-        self.colors.append(color)
+        if not self.colors:
+            self.colors.append(color)
         self.labels = data_x
 
         _dataset = utils.dataset(
@@ -60,10 +63,14 @@ class Chart_init(chart_framework.ChartSuperClass):
                     )
         self.datasets.append(_dataset)
 
-    def get_ready_data(self, label, backgroundColor, borderColor, fill = False, **other_arguments):
+    def get_ready_data(self, label, backgroundColor=None, borderColor=None, fill = False, **other_arguments):
         """
         if need more settings when single data is added
         """
+        if backgroundColor is None:
+            backgroundColor = self.colors
+        if borderColor is None:
+            borderColor = self.colors
         self.add_dataset(self.labels, self.data, label, 
                         backgroundColor = backgroundColor, 
                         borderColor = borderColor, 
@@ -73,7 +80,7 @@ class Chart_init(chart_framework.ChartSuperClass):
 
     def setup(self, width=800, **other_arguments): 
         if not self.datasets:
-            self.add_dataset(self.labels, self.data, "My dataset")
+            self.add_dataset(self.labels, self.data, "My dataset", backgroundColor = self.colors)
         config = utils.config(
             type=self.chart_type,
             data=utils.data(
