@@ -10,8 +10,8 @@ class Line(chart_setup.Chart_init):
     title = 'Line Chart'
     chart_type = 'line'
 
-    def __init__(self, options=None, *pargs, **kwargs):
-        super(Line, self).__init__(*pargs, **kwargs)
+    def __init__(self, options=None, title = None, *pargs, **kwargs):
+        super(Line, self).__init__(title = title, *pargs, **kwargs)
         if options is None:
             options = self.default_options()
         self.options = options

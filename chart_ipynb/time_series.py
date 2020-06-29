@@ -88,7 +88,7 @@ def default_axis(axis, axis_label = None, multi_axis = False, multi_axis_name = 
 def ts_default_option(xAxes = None, yAxes = None, 
                        xAxes_name = None, yAxes_name = None,
                        multi_axis = False, multi_axis_name = None,
-                       stacked = False):
+                       stacked = False, title = None):
 
         if xAxes is None:
             if xAxes_name is None:
@@ -99,12 +99,14 @@ def ts_default_option(xAxes = None, yAxes = None,
                                  multi_axis = multi_axis, multi_axis_name = multi_axis_name, stacked = stacked)
         _option = utils.options(
                         responsive=True,
+                        title=dict(display=True, text=title),
                         animation = dict(duration=0),
                         scales = { 'xAxes': xAxes, 'yAxes': yAxes}
                 )
         if stacked:
             _option = utils.options(
                         responsive=True,
+                        title=dict(display=True, text=title),
                         tooltips= {
                             'mode': 'index',
                             'intersect': False
@@ -127,6 +129,7 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
                             multi_axis = False, axis_label = None, stacked = False,
                             options = None, xAxes = None, yAxes = None,
                             colors=None, backgroundColor = None, borderColor = None, 
+                            title = None,
                             fill = False,
                             width=800,
                             **other_arguments
@@ -186,13 +189,13 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
     if options is None:
         options = ts_default_option(xAxes = xAxes, yAxes = yAxes, 
                                     yAxes_name = val_col, 
-                                    multi_axis = multi_axis, multi_axis_name=ticker_symbol, stacked = stacked)
+                                    multi_axis = multi_axis, multi_axis_name=ticker_symbol, stacked = stacked, title = title)
 
     result = None
     if _chart_type == 'line':
-        result = line.Line(options = options)
+        result = line.Line(options = options, title=title)
     if _chart_type == 'bar':
-        result = bar.Bar(options = options, stacked=stacked)
+        result = bar.Bar(options = options, stacked=stacked, title=title)
 
 
     for i in range(len(ticker_symbol)):

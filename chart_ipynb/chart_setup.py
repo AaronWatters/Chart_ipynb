@@ -9,10 +9,12 @@ class Chart_init(chart_framework.ChartSuperClass):
     title = 'Chart'
     chart_type = 'line'
 
-    def __init__(self, options=None, *pargs, **kwargs):
+    def __init__(self, options=None, title = None, *pargs, **kwargs):
         super(Chart_init, self).__init__(*pargs, **kwargs)
         if options is None:
             options = self.default_options()
+        if title is not None:
+            self.title = title
         self.options = options
         self.labels = []
         self.data = []
