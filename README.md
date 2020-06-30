@@ -14,10 +14,24 @@ Chart.js chart types.
 pip install -e .
 ```
 
-## Examples 
+## Baisc Charts 
 
 `Chart_ipynb` makes it easier to present data interactively on Jupyter. Some basic charts are introduced in [quick reference](https://github.com/AaronWatters/Chart_ipynb/blob/master/notebooks/chart_ipynb%20quick%20reference.ipynb).  
 
 | Charts |  |
 |:--------:|:---:|
 | Line Chart|<img src="notebooks/pics/lineC.png" width=400>|
+| Bar Chart|<img src="notebooks/pics/barC.png" width=400> |
+| Scatter Chart|<img src="notebooks/pics/scatterC.png" width=400> |
+| Pie Chart|<img src="notebooks/pics/pieC_single.png" width=400> |
+|...||
+
+
+## Time Series
+
+`Chart_ipynb` provides an additional function to initialize line chart and bar chart specifically for time series data. Users can either use their own data as input or use inner data by specifying ticker symbol of company to obtain the data from data websites (`quandl` by default).  
+The example can be found [here](https://github.com/AaronWatters/Chart_ipynb/blob/master/notebooks/time%20series%20example.ipynb).  
+<img align="center" src="notebooks/pics/closing_price.png" width=400>
+
+## Covid-19 Examples
+
