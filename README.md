@@ -30,8 +30,10 @@ pip install -e .
 ## Time Series
 
 `Chart_ipynb` provides an additional function to initialize line chart and bar chart specifically for time series data. Users can either use their own data as input or use inner data by specifying ticker symbol of company to obtain the data from data websites (`quandl` by default).  
-The example can be found [here](https://github.com/AaronWatters/Chart_ipynb/blob/master/notebooks/time%20series%20example.ipynb).  
-<img align="center" src="notebooks/pics/closing_price.png" width=400>
+The example can be found [here](https://github.com/AaronWatters/Chart_ipynb/blob/master/notebooks/time%20series%20example.ipynb). 
+<p align="center">
+<img src="notebooks/pics/closing_price.png" width=800>
+</p>
 
 ## Covid-19 Examples
 
