@@ -29,9 +29,7 @@ class Scatter(chart_setup.Chart_init):
         import random
         
         if color is None:
-            if not self.colors:
-                color = self.colors
-            elif backgroundColor is not None:
+            if backgroundColor is not None:
                 color = backgroundColor
             elif borderColor is not None:
                 color = borderColor
@@ -43,8 +41,7 @@ class Scatter(chart_setup.Chart_init):
             borderColor = color
         
         self.dataset_name.append(dataset_name)
-        if not self.colors:
-            self.colors.append(color)
+
 
         _dataset = utils.dataset(
                         label=dataset_name,
@@ -60,10 +57,11 @@ class Scatter(chart_setup.Chart_init):
         """
         if need more settings when single data is added
         """
-        if backgroundColor is None:
-            backgroundColor = self.colors
-        if borderColor is None:
-            borderColor = self.colors
+        if self.colors:
+            if backgroundColor is None:
+                backgroundColor = self.colors
+            if borderColor is None:
+                borderColor = self.colors
         self.add_dataset(self.data, label, 
                         backgroundColor = backgroundColor, 
                         borderColor = borderColor, 
