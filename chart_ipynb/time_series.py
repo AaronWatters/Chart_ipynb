@@ -135,16 +135,29 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
                             **other_arguments
                     ):
     '''
-    ticker_symbol: stock symbol for company; a list or a string
-                    if self provide data, should be the name list or string of the dataset
-    start, end: 'year-month-day'
-    val_col: price type
-    colors: colors for dataset; one for each
-    multi_axis: only for two datasets
-    data_provide: if or not self provide data
-    website: the address to get data
-    api_key: api key to access the data at website
-    input_dataset: a list
+    _chart_type: the type of chart, 'line' or 'bar     
+    ticker_symbol: if use inner stock dataset, it will be ticker symbol of company; if self provide data, it will be the name of datasets shown in the legend
+    val_col: the name of value column  
+    date_col: the name of date column  
+    start: start date; a string format in  'yyyy-m-d'  
+    end: end date; a string format in  'yyyy-m-d'   
+    data_provide: self provide data or not; default is False    
+    input_dataset: if data_provide=True, must provide your own data   
+    website: the website you want to access the data   
+    api_key: API key to access the data from the website   
+    multi_axis: only work for two datasets    
+    axis_label: axis label 
+    stacked: only work for bar chart and multi_aixs = False 
+    options: allow customization   
+    xAxes: customized x aixs  
+    yAxes: customized y aixs   
+    colors: color for each dataset you want to specify; a list of color name    
+    backgroundColor: background color for each dataset you want to specify; a list of color name   
+    borderColor: border color for each dataset you want to specify; a list of color name   
+    title: title of the chart  
+    fill: fill the point or not  
+    width: width of the chart  
+    **other_arguments: refer to Chart.js
     '''
     import pandas_datareader
     import pandas_datareader.data as web
