@@ -7,6 +7,10 @@ Simple jupyter widget wrappers for
 Chart.js chart types.
 </a>
 
+<p align="center>
+<img src="notebooks/pics/read_me_code.png" width=700>          
+</p>
+
 
 ## Development install
 
