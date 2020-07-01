@@ -26,14 +26,14 @@ class Line(chart_setup.Chart_init):
             title=dict(display=true, text=self.title),
             animation=dict(animateScale=true, animateRotate=true),
             scales = utils.scales(
-                        xAxes = utils.axes(
+                        xAxes = [utils.axes(
                                 display = True,
                                 scaleLabel = dict(display=true, labelString='x')
-                            ),
-                        yAxes = utils.axes(
+                            )],
+                        yAxes = [utils.axes(
                                 display = True,
                                 scaleLabel = dict(display=true, labelString='y')
-                            )
+                        )]
                     )
         )
         self.options = options
