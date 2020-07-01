@@ -7,8 +7,17 @@ Simple jupyter widget wrappers for
 Chart.js chart types.
 </a>
 
-<p align="center>
-<img src="notebooks/pics/read_me_code.png" width=700>          
+```python
+doughnut_chart = doughnut.Doughnut()
+doughnut_chart.set_title("Chocolate Frosted")
+doughnut_chart.add("Big:, 10, "brown")
+doughnut_chart.add("Medium", 7, "pink")
+doughnut_chart.add("Small", 3, "purple")
+doughnut_chart.setup()
+doughnut_chart
+```
+<p align="center">
+          <img src="notebooks/pics/doughnutC.png" width=700>          
 </p>
 
 
