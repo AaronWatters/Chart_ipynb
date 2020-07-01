@@ -94,3 +94,21 @@ class Chart_init(chart_framework.ChartSuperClass):
         self.colors = []
         self.datasets = []
         self.dataset_name = []
+
+    def update_axis_type(self, axis_position, axis_type):
+        '''
+        axis_position: 'x', 'y'
+        axis_type: 'category', 'logarithmic', 'linear'
+        '''
+        axis_name = {'x': 'xAxes', 'y': 'yAxes'}
+        axis_po = axis_name[axis_position]
+        if 'scales' in self.options:
+            if axis_po in self.options['scales']:
+                if 'type' in self.options['scales'][axis_po][0]:
+                    self.options['scales'][axies_po][0]['type'] = axis_type
+                else:
+                    self.options['scales'][axis_po][0].update({'type':axis_type})
+            else:
+                self.options['scales'].update({axis_po:[{'type':axis_type}]})
+        else:
+            self.options.update({'scales':{axis_po:[{'type':axis_type}]}})
