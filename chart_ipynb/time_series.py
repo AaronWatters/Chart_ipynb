@@ -5,11 +5,14 @@ import pandas as pd
 import numpy as np
 
 
+global_label = None
+
 def data_format(dataset, val_col, data_provide = False, date_col=None):
         """
         dataset: pd.DataFrame
         val_col: the column name for the target value. e.g 'Close'
         """
+        global global_label
         if not data_provide:
             date_col = 'Date'
         else:
@@ -20,8 +23,16 @@ def data_format(dataset, val_col, data_provide = False, date_col=None):
         data = idx_reset_df[[val_col, date_col]]
         sort_df = idx_reset_df.sort_values(by=date_col)
         sort_df[date_col]=sort_df[date_col].astype(str)
-
-        return  list(sort_df[val_col]), list(sort_df[date_col])
+        val_data = list(sort_df[val_col])
+        label_data = list(sort_df[date_col])
+        if data_provide:
+            if global_label is None:
+                global_label = label_data[:]
+            else:
+                if len(global_label) > len(label_data):
+                    val_data = [0]*(len(global_label)-len(label_data)) + val_data
+                    label_data = global_label[:]
+        return  val_data, label_data
 
 def default_axis(axis, axis_label = None, multi_axis = False, multi_axis_name = None, stacked = False):
         axis_labels = {'x': 'x', 'y': 'y'}
@@ -88,7 +99,8 @@ def default_axis(axis, axis_label = None, multi_axis = False, multi_axis_name = 
 def ts_default_option(xAxes = None, yAxes = None, 
                        xAxes_name = None, yAxes_name = None,
                        multi_axis = False, multi_axis_name = None,
-                       stacked = False, title = None):
+                       stacked = False, title = None, log_axis = False, 
+                       mode = 'index', intersect = False):
 
         if xAxes is None:
             if xAxes_name is None:
@@ -101,6 +113,10 @@ def ts_default_option(xAxes = None, yAxes = None,
                         responsive=True,
                         title=dict(display=True, text=title),
                         animation = dict(duration=0),
+                        tooltips= {
+                            'mode': mode,
+                            'intersect': intersect
+                        },
                         scales = { 'xAxes': xAxes, 'yAxes': yAxes}
                 )
         if stacked:
@@ -108,8 +124,8 @@ def ts_default_option(xAxes = None, yAxes = None,
                         responsive=True,
                         title=dict(display=True, text=title),
                         tooltips= {
-                            'mode': 'index',
-                            'intersect': False
+                            'mode': mode,
+                            'intersect': intersect
                         },
                         scales = {
                                     'xAxes': [{
@@ -120,7 +136,8 @@ def ts_default_option(xAxes = None, yAxes = None,
                                     }]
                                 }
                 )
-                
+        if log_axis and not multi_axis:
+            _option['scales']['yAxes'][0].update({'type':'logarithmic'})
         return _option
 
 def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, start=None, end=None, 
@@ -130,7 +147,8 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
                             options = None, xAxes = None, yAxes = None,
                             colors=None, backgroundColor = None, borderColor = None, 
                             title = None,
-                            fill = False,
+                            fill = False, log_axis = False,
+                            mode = 'index', intersect = False,
                             width=800,
                             **other_arguments
                     ):
@@ -165,6 +183,7 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
     import time
     import random
 
+    global global_label
 
     if not data_provide:   
         if website == 'quandl' and api_key is None:
@@ -202,7 +221,9 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
     if options is None:
         options = ts_default_option(xAxes = xAxes, yAxes = yAxes, 
                                     yAxes_name = val_col, 
-                                    multi_axis = multi_axis, multi_axis_name=ticker_symbol, stacked = stacked, title = title)
+                                    multi_axis = multi_axis, multi_axis_name=ticker_symbol, stacked = stacked, title = title,
+                                    log_axis=log_axis, 
+                                    mode = mode, intersect = intersect)
 
     result = None
     if _chart_type == 'line':
@@ -210,6 +231,8 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
     if _chart_type == 'bar':
         result = bar.Bar(options = options, stacked=stacked, title=title)
 
+    if data_provide:
+        global_label = list(input_dataset[np.argmax([input_dataset[i].shape[0] for i in range(len(input_dataset))])][date_col].values)
 
     for i in range(len(ticker_symbol)):
             symbol = ticker_symbol[i]
