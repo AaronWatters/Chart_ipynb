@@ -23,9 +23,16 @@ doughnut_chart
 
 ## Development install
 
+Please clone to your local location and do the following:  
 ```
 pip install -e .
 ```
+
+If you don't want to clone the zip file, you can do 
+```
+pip install -e git+https://github.com/AaronWatters/Chart_ipynb.git
+```
+
 
 ## Baisc Charts 
 
