@@ -16,6 +16,7 @@ setup(
     url=url,
     install_requires=[
         "jp_proxy_widget", 
+        "jp_doodle",
         "datetime", 
         "numpy", 
         "pandas",
