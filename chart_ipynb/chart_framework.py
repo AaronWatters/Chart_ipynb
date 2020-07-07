@@ -39,6 +39,10 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
         self.element.html("Uninitialized Chart.js widget.")
 
     def initialize_chart(self, width, config):
+
+        def print_info(info):
+            print(info)
+
         self.js_init("""
             element.empty();
             element.width(width);
@@ -57,7 +61,19 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
                 var imgData = element.chart_info.context.getImageData(0, 0, cv.width, cv.height);
                 return {"data": imgData.data, "height": imgData.height, "width": imgData.width};
             };
-        """, width=width, config=config)
+            var canvas0 = canvas[0];
+            canvas0.onclick = function(event) {
+                debugger;
+                console.log("onclick called" + event);
+                var data = chart.getElementAtEvent(event);
+                console.log(data[0]);
+                //var index = data[0]._index;
+                //console.log("index = " + index);
+                var chart_info = data[0]._chart;
+                print_info(data[0]._index)
+            }
+        """, width=width, config=config, print_info = print_info)
+    
 
     def pixels_array(self):
         import numpy as np
