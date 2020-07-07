@@ -2,6 +2,7 @@ from . import chart_framework
 from . import utils
 import pandas as pd
 import numpy as np
+import random
 
 
 class Chart_init(chart_framework.ChartSuperClass):
@@ -112,3 +113,35 @@ class Chart_init(chart_framework.ChartSuperClass):
                 self.options['scales'].update({axis_po:[{'type':axis_type}]})
         else:
             self.options.update({'scales':{axis_po:[{'type':axis_type}]}})
+
+    def update_data(self, data_value, label):
+        self.js_init("""
+            element.chart_info.chart.config.data.datasets[0].data.push(data_value);
+            element.chart_info.chart.config.data.labels.push(label);
+            element.chart_info.chart.update();
+        """, data_value = data_value, label = label)
+
+    def update_dataset(self, data, label=None, color = None, backgroundColor=None, borderColor=None, **other_arguments):
+        
+        if color is None:
+            if backgroundColor is not None:
+                color = backgroundColor
+            elif borderColor is not None:
+                color = borderColor
+            else:
+                color = random.choice(utils.color_name)
+        if backgroundColor is None:
+            backgroundColor = color
+        if borderColor is None:
+            borderColor = color
+        if label is None:
+            label = 'newDataset'
+
+        dataset = {'backgroundColor':backgroundColor, 
+                    'borderColor': borderColor,
+                    'data': data,
+                    'label': label}
+        self.js_init("""
+            element.chart_info.chart.config.data.datasets.push(dataset)
+            element.chart_info.chart.update();
+        """, dataset = dataset)
