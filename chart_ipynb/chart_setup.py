@@ -115,6 +115,7 @@ class Chart_init(chart_framework.ChartSuperClass):
             self.options.update({'scales':{axis_po:[{'type':axis_type}]}})
 
     def update_data(self, data_value, label):
+        self.labels.append(label)
         self.js_init("""
             element.chart_info.chart.config.data.datasets[0].data.push(data_value);
             element.chart_info.chart.config.data.labels.push(label);
@@ -137,10 +138,12 @@ class Chart_init(chart_framework.ChartSuperClass):
         if label is None:
             label = 'newDataset'
 
-        dataset = {'backgroundColor':backgroundColor, 
-                    'borderColor': borderColor,
-                    'data': data,
-                    'label': label}
+        dataset = utils.dataset(backgroundColor = backgroundColor, 
+                    borderColor = borderColor,
+                    data = data,
+                    label = label,
+                    **other_arguments,)
+        self.datasets.append(dataset)
         self.js_init("""
             element.chart_info.chart.config.data.datasets.push(dataset)
             element.chart_info.chart.update();
