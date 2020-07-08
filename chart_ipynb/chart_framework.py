@@ -61,10 +61,11 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
             };
         """, width=width, config=config)
     
-    def click_event(self, func=None):
+    def click_info(self):
         
         def print_info(info):
             self.click_info.append(info)
+            print(info)
         
         self.js_init("""
             var canvas = element.chart_info.canvas;
