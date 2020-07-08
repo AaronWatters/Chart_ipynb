@@ -60,9 +60,9 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
                 return {"data": imgData.data, "height": imgData.height, "width": imgData.width};
             };
         """, width=width, config=config)
-    
-    def click_info(self):
-        
+
+    def click_callback(self, callback):
+
         def print_info(info):
             self.clicked_info.append(info)
             print(info)
@@ -92,42 +92,10 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
                 info.datasetLabel = dataset.label;
                 info.label = chart_config.data.labels[index];
                 info.dataValue = dataset.data[index];
-                
                 print_info(info);
+                click_callback(info);
             };
-        """, print_info = print_info)
-
-    def click_callback(self, callback):
-        
-        self.js_init("""
-            var canvas = element.chart_info.canvas;
-            var chart = element.chart_info.chart;
-            var canvas0 = canvas[0];
-            canvas0.onclick = function(event) {
-                var info = {};
-                console.log("onclick called" + event);
-                var data = chart.getElementAtEvent(event);
-                
-                console.log(data[0]);
-                var index = data[0]._index;
-                var dataset_index = data[0]._datasetIndex;
-                info.dataIndex = index;
-                info.datasetIndex = dataset_index;
-
-                var model = data[0]._model;
-                info.backgroundColor = model.backgroundColor;
-                info.borderColor = model.borderColor;
-                
-                var chart_info = data[0]._chart;
-                var chart_config = chart_info.config;
-                var dataset = chart_config.data.datasets[dataset_index];
-                info.datasetLabel = dataset.label;
-                info.label = chart_config.data.labels[index];
-                info.dataValue = dataset.data[index];
-                
-                print_info(info);
-            };
-        """, print_info = callback)
+        """, click_callback = callback, print_info=print_info)
 
     def off_click_event(self):
         self.js_init("""
