@@ -37,7 +37,7 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
         super(ChartSuperClass, self).__init__(*pargs, **kwargs)
         load_requirements(self)
         self.element.html("Uninitialized Chart.js widget.")
-        self.click_info = []
+        self.clicked_info = []
 
     def initialize_chart(self, width, config):
 
@@ -64,7 +64,7 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
     def click_info(self):
         
         def print_info(info):
-            self.click_info.append(info)
+            self.clicked_info.append(info)
             print(info)
         
         self.js_init("""
