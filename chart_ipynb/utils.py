@@ -292,3 +292,4 @@ def color_rgb(color_name, opaque=1):
         return 
     [r, g, b] = colorName[color_name]
     return 'rgb(%d, %d, %d, %f)' %(r, g, b, opaque)
+
