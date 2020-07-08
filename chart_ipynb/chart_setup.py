@@ -115,13 +115,30 @@ class Chart_init(chart_framework.ChartSuperClass):
         else:
             self.options.update({'scales':{axis_po:[{'type':axis_type}]}})
 
-    def update_data(self, data_value, label):
-        self.labels.append(label)
+    def update_data(self, data_value, label, dataset_name = None):
+        if dataset_name is None:
+            dataset_name = self.dataset_name[0]
+        dataset_index = self.dataset_name.index(dataset_name)
+        add_label = False
+        if label not in self.labels:
+            self.labels.append(label)
+            add_label = True
+        if not add_label:
+            label_index = self.labels.index(label)
+            if data_value==self.datasets[dataset_index]['data'][label_index]:
+                print("The data has been existed")
+                return
         self.js_init("""
-            element.chart_info.chart.config.data.datasets[0].data.push(data_value);
-            element.chart_info.chart.config.data.labels.push(label);
+            element.chart_info.chart.config.data.datasets[dataset_index].data.push(data_value);
+            if (add_label) {
+                element.chart_info.chart.config.data.labels.push(label);
+            };
             element.chart_info.chart.update();
-        """, data_value = data_value, label = label)
+        """, data_value = data_value, label = label, dataset_index = dataset_index,
+             add_label = add_label)
+        self.datasets[dataset_index]['data'].append(data_value)
+
+
 
     def update_dataset(self, data, label=None, color = None, backgroundColor=None, borderColor=None, **other_arguments):
         
@@ -145,6 +162,7 @@ class Chart_init(chart_framework.ChartSuperClass):
                     label = label,
                     **other_arguments,)
         self.datasets.append(dataset)
+        self.dataset_name.append(label)
         self.js_init("""
             element.chart_info.chart.config.data.datasets.push(dataset)
             element.chart_info.chart.update();
@@ -152,11 +170,16 @@ class Chart_init(chart_framework.ChartSuperClass):
 
     def remove_data(self):
 
-        def callback_info(info, remove_label):
+        def callback_info(info, remove_label, remove_data):
             self.remove_item.append(info)
-            self.datasets[info['datasetIndex']]['data'].pop(info['dataIndex'])
+            if remove_data:
+                self.datasets[info['datasetIndex']]['data'].pop(info['dataIndex'])
+            else:
+                self.datasets[info['datasetIndex']]['data'][info['dataIndex']] = None
             if remove_label:
                 self.labels.pop(info['dataIndex'])
+                for dataset in self.datasets:
+                    dataset['data'].pop(info['dataIndex'])
 
 
         self.js_init("""
@@ -176,21 +199,41 @@ class Chart_init(chart_framework.ChartSuperClass):
                 var labels = chart_config.data.labels;
                 var dataset = datasets[dataset_index];
 
-                dataset.data.splice(index,1);
+                var remove_data = true;
+                if (index!=(dataset.length-1)){
+                    dataset.data[index] = null;
+                    remove_data = false;
+                } else{
+                    dataset.data.splice(index,1);
+                }
                 var total_len = 0;
                 var remove_label = false;
+                var check_null = [];
                 for (var i = 0; i < datasets.length; i++){
                     total_len += datasets[i].data.length;
+                    check_null.push(datasets[i].data[index]);
                 }
 
                 if ((total_len/3) == (labels.length-1)){
                     labels.splice(index,1);
                     remove_label = true;
                 }
+                var all_null = function(val) {
+                    return val === null;
+                }
+                console.log(check_null);
+                console.log(check_null.every(all_null));
+                if (check_null.every(all_null)){
+                    remove_label = true;
+                    labels.splice(index,1);
+                    for (var i = 0; i < datasets.length; i++){
+                        datasets[i].data.splice(index,1);
+                    }
+                }
 
                 remove_info.dataIndex = index;
                 remove_info.datasetIndex = dataset_index;
                 element.chart_info.chart.update();
-                callback_info(remove_info, remove_label);
+                callback_info(remove_info, remove_label, remove_data);
             };
         """, callback_info = callback_info)
