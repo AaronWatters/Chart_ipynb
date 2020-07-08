@@ -37,11 +37,9 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
         super(ChartSuperClass, self).__init__(*pargs, **kwargs)
         load_requirements(self)
         self.element.html("Uninitialized Chart.js widget.")
+        self.click_info = []
 
     def initialize_chart(self, width, config):
-
-        def print_info(info):
-            print(info)
 
         self.js_init("""
             element.empty();
@@ -61,19 +59,42 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
                 var imgData = element.chart_info.context.getImageData(0, 0, cv.width, cv.height);
                 return {"data": imgData.data, "height": imgData.height, "width": imgData.width};
             };
+        """, width=width, config=config)
+    
+    def click_event(self, func=None):
+        
+        def print_info(info):
+            self.click_info.append(info)
+        
+        self.js_init("""
+            var canvas = element.chart_info.canvas;
+            var chart = element.chart_info.chart;
             var canvas0 = canvas[0];
             canvas0.onclick = function(event) {
-                debugger;
+                var info = {};
                 console.log("onclick called" + event);
                 var data = chart.getElementAtEvent(event);
+                
                 console.log(data[0]);
-                //var index = data[0]._index;
-                //console.log("index = " + index);
+                var index = data[0]._index;
+                var dataset_index = data[0]._datasetIndex;
+                info.dataIndex = index;
+                info.datasetIndex = dataset_index;
+
+                var model = data[0]._model;
+                info.backgroundColor = model.backgroundColor;
+                info.borderColor = model.borderColor;
+                
                 var chart_info = data[0]._chart;
-                print_info(data[0]._index)
-            }
-        """, width=width, config=config, print_info = print_info)
-    
+                var chart_config = chart_info.config;
+                var dataset = chart_config.data.datasets[dataset_index];
+                info.datasetLabel = dataset.label;
+                info.label = chart_config.data.labels[index];
+                info.dataValue = dataset.data[index];
+                
+                print_info(info);
+            };
+        """, print_info = print_info)
 
     def pixels_array(self):
         import numpy as np
