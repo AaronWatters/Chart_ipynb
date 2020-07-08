@@ -22,6 +22,7 @@ class Chart_init(chart_framework.ChartSuperClass):
         self.colors = []
         self.datasets = []
         self.dataset_name = []
+        self.remove_item = []
     
     def add(self, label, datum, color):
         self.labels.append(label)
@@ -148,3 +149,48 @@ class Chart_init(chart_framework.ChartSuperClass):
             element.chart_info.chart.config.data.datasets.push(dataset)
             element.chart_info.chart.update();
         """, dataset = dataset)
+
+    def remove_data(self):
+
+        def callback_info(info, remove_label):
+            self.remove_item.append(info)
+            self.datasets[info['datasetIndex']]['data'].pop(info['dataIndex'])
+            if remove_label:
+                self.labels.pop(info['dataIndex'])
+
+
+        self.js_init("""
+            var canvas = element.chart_info.canvas;
+            var chart = element.chart_info.chart;
+            var canvas0 = canvas[0];
+            canvas0.onclick = function(event) {
+                var remove_info = {};
+                var data = chart.getElementAtEvent(event);
+                console.log(data[0]);
+                var index = data[0]._index;
+                var dataset_index = data[0]._datasetIndex;
+                
+                var chart_info = data[0]._chart;
+                var chart_config = chart_info.config;
+                var datasets = chart_config.data.datasets;
+                var labels = chart_config.data.labels;
+                var dataset = datasets[dataset_index];
+
+                dataset.data.splice(index,1);
+                var total_len = 0;
+                var remove_label = false;
+                for (var i = 0; i < datasets.length; i++){
+                    total_len += datasets[i].data.length;
+                }
+
+                if ((total_len/3) == (labels.length-1)){
+                    labels.splice(index,1);
+                    remove_label = true;
+                }
+
+                remove_info.dataIndex = index;
+                remove_info.datasetIndex = dataset_index;
+                element.chart_info.chart.update();
+                callback_info(remove_info, remove_label);
+            };
+        """, callback_info = callback_info)
