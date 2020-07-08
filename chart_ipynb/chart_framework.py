@@ -96,6 +96,16 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
             };
         """, print_info = print_info)
 
+    def off_click_event(self):
+        self.js_init("""
+            var canvas = element.chart_info.canvas;
+            var chart = element.chart_info.chart;
+            var canvas0 = canvas[0];
+            canvas0.onclick = function(event) {
+                // do nothing
+            };
+        """)
+
     def pixels_array(self):
         import numpy as np
         from jp_proxy_widget.hex_codec import hex_to_bytearray
