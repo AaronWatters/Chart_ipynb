@@ -198,6 +198,9 @@ class Chart_init(chart_framework.ChartSuperClass):
                 var datasets = chart_config.data.datasets;
                 var labels = chart_config.data.labels;
                 var dataset = datasets[dataset_index];
+                var all_null = function(val) {
+                    return val === null;
+                }
 
                 var remove_data = true;
                 if (index!=(dataset.length-1)){
@@ -212,17 +215,16 @@ class Chart_init(chart_framework.ChartSuperClass):
                 for (var i = 0; i < datasets.length; i++){
                     total_len += datasets[i].data.length;
                     check_null.push(datasets[i].data[index]);
+                    if (datasets[i].data.every(all_null)){
+                        datasets.splice(i,1);
+                    }
                 }
 
                 if ((total_len/3) == (labels.length-1)){
                     labels.splice(index,1);
                     remove_label = true;
                 }
-                var all_null = function(val) {
-                    return val === null;
-                }
-                console.log(check_null);
-                console.log(check_null.every(all_null));
+
                 if (check_null.every(all_null)){
                     remove_label = true;
                     labels.splice(index,1);
