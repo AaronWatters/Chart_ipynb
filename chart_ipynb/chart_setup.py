@@ -239,3 +239,28 @@ class Chart_init(chart_framework.ChartSuperClass):
                 callback_info(remove_info, remove_label, remove_data);
             };
         """, callback_info = callback_info)
+
+    def remove_dataset(self, dataset_name):
+
+        if dataset_name not in self.dataset_name:
+            print('no such dataset')
+            return 
+        dataset_idx = self.dataset_name.index(dataset_name)
+
+        def remove_callback(info):
+            print(info)
+
+        self.js_init("""
+            var canvas = element.chart_info.canvas;
+            var chart = element.chart_info.chart;
+            console.log(chart);
+            var chart_config = chart.config;
+            var datasets = chart_config.data.datasets;
+            var dataset = datasets[dataset_index];
+            
+            datasets.splice(dataset_index,1);
+            element.chart_info.chart.update();
+            remove_callback(dataset);
+        """, dataset_index = dataset_idx, remove_callback = remove_callback)
+        self.datasets.pop(dataset_idx)
+        self.dataset_name.pop(dataset_idx)
