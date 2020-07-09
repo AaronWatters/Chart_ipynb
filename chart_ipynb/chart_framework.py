@@ -1,4 +1,10 @@
 
+
+"""
+Framework for wrapping Chart.js https://www.chartjs.org/ charts
+as jupyter widgets.
+"""
+
 from . import local_files
 from . import utils
 import jp_proxy_widget
@@ -31,16 +37,100 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
         super(ChartSuperClass, self).__init__(*pargs, **kwargs)
         load_requirements(self)
         self.element.html("Uninitialized Chart.js widget.")
+        self.clicked_info = []
 
     def initialize_chart(self, width, config):
+
         self.js_init("""
             element.empty();
             element.width(width);
 
             var canvas = $("<canvas></canvas>").appendTo(element);
             var ctx = canvas[0].getContext('2d');
-            element.myDoughnut = new Chart(ctx, config);
+            var chart = new Chart(ctx, config);
+            element.chart_info = {
+                chart: chart,
+                canvas: canvas,
+                context: ctx,
+            };
+            element.chart_info.get_pixels = function () {
+                debugger;
+                var cv = element.chart_info.canvas[0];
+                var imgData = element.chart_info.context.getImageData(0, 0, cv.width, cv.height);
+                return {"data": imgData.data, "height": imgData.height, "width": imgData.width};
+            };
         """, width=width, config=config)
+
+    def click_callback(self, callback=None):
+
+        def print_info(info):
+            self.clicked_info.append(info)
+            # print(info)
+        
+        self.js_init("""
+            var canvas = element.chart_info.canvas;
+            var chart = element.chart_info.chart;
+            var canvas0 = canvas[0];
+            canvas0.onclick = function(event) {
+                var info = {};
+                console.log("onclick called" + event);
+                var data = chart.getElementAtEvent(event);
+                
+                console.log(data[0]);
+                var index = data[0]._index;
+                var dataset_index = data[0]._datasetIndex;
+                info.dataIndex = index;
+                info.datasetIndex = dataset_index;
+
+                var model = data[0]._model;
+                info.backgroundColor = model.backgroundColor;
+                info.borderColor = model.borderColor;
+                
+                var chart_info = data[0]._chart;
+                var chart_config = chart_info.config;
+                var dataset = chart_config.data.datasets[dataset_index];
+                info.datasetLabel = dataset.label;
+                info.label = chart_config.data.labels[index];
+                info.dataValue = dataset.data[index];
+                print_info(info);
+                click_callback(info);
+            };
+        """, click_callback = callback, print_info=print_info)
+
+    def off_click_event(self):
+        self.js_init("""
+            var canvas = element.chart_info.canvas;
+            var chart = element.chart_info.chart;
+            var canvas0 = canvas[0];
+            canvas0.onclick = function(event) {
+                // do nothing
+            };
+        """)
+
+    def pixels_array(self):
+        import numpy as np
+        from jp_proxy_widget.hex_codec import hex_to_bytearray
+        imgData = self.element.chart_info.get_pixels().sync_value()
+        data_hex = imgData["data"]
+        width = imgData["width"]
+        height = imgData["height"]
+        data_bytes = hex_to_bytearray(data_hex)
+        bytes_per_pixel = 4
+        array1d = np.array(data_bytes, dtype=np.ubyte)
+        img_array = array1d.reshape((height, width, bytes_per_pixel))
+        return img_array
+
+    def pil_image(self):
+        from PIL import Image
+        return Image.fromarray(self.pixels_array(), mode="RGBA")
+
+    def embed_image(self):
+        from IPython.display import display
+        display(self.pil_image())
+
+    def save_image(self, to_path):
+        im = self.pil_image()
+        im.save(to_path)
 
     def default_options(self):
         true = True
@@ -96,7 +186,7 @@ def example_donut():
         options= utils.options(
             responsive=true,
             legend=dict(position="top"),
-            title=dict(display=true, text="Dunkin Donut"),
+            title=dict(display=true, text="Tasty Donuts"),
             animation=dict(animateScale=true, animateRotate=true)
         ),
     )
