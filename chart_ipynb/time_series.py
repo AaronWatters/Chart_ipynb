@@ -19,7 +19,7 @@ def data_format(dataset, val_col, data_provide = False, date_col=None):
             if date_col is None:
                 print('please specify the date column')
                 raise
-        idx_reset_df = dataset.reset_index()
+        idx_reset_df = dataset.reset_index(drop=True)
         data = idx_reset_df[[val_col, date_col]]
         sort_df = idx_reset_df.sort_values(by=date_col)
         sort_df[date_col]=sort_df[date_col].astype(str)
