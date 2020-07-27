@@ -3,6 +3,7 @@ from unittest.mock import patch
 from unittest.mock import MagicMock
 
 from chart_ipynb import chart_framework
+import jp_proxy_widget
 
 class TestChartFramework(unittest.TestCase):
 
@@ -61,3 +62,25 @@ class TestChartFramework(unittest.TestCase):
              }
         self.assertEqual(options, expected_options)
 
+    @patch("jp_proxy_widget.JSProxyWidget")
+    def test_set_title(self, mock_proxy_widge):
+        widget = chart_framework.ChartSuperClass()
+        options = widget.default_options()
+        widget.set_title('test')
+        # widget.initialize_chart(width=800, config=config)
+        title = widget.options['title']['text']
+        self.assertEqual(title, 'test')
+    
+    @patch("jp_proxy_widget.JSProxyWidget")
+    def test_callback(self, mock_proxy_widget):
+        '''
+        not implement yet
+        '''
+
+    @patch("jp_proxy_widget.JSProxyWidget")
+    @patch("chart_ipynb.chart_framework.example_donut")
+    def test_pixels_array(self, mock_proxy_widge, mock_donut):
+        widget = mock_donut()
+        widget.save_image('tests.png')
+        assert mock_donut.called
+        # assert mock_proxy_widge.called
