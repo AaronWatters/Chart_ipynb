@@ -23,6 +23,8 @@ Set up with Travis continuous integration.
 
 Set up with codecov
 
+Look here for hints: https://github.com/AaronWatters/least_absolute_regression
+
 Add convenience functions for simple chart cases, similar to
 
 [1] pie_chart(title="People", data={"men": 10, "women": 12, "boys": 3, "girls":7})
@@ -31,4 +33,8 @@ The above should create a bar chart with default size and color choices, etceter
 
 Make a convenience function like this for each of the chart types.
 
+Add test cases for the convience functions.
+
 Add at least one end to end test.
+
+https://github.com/AaronWatters/widget_cookie_cutter_test/tree/master/end_to_end_testing
