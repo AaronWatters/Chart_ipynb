@@ -8,6 +8,7 @@ as jupyter widgets.
 from . import local_files
 from . import utils
 import jp_proxy_widget
+from IPython.display import display
 
 required_javascript_modules = [
     local_files.vendor_path("js/Chart.js"),
