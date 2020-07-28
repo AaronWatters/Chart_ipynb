@@ -78,9 +78,11 @@ class TestChartFramework(unittest.TestCase):
         '''
 
     @patch("jp_proxy_widget.JSProxyWidget")
-    @patch("chart_ipynb.chart_framework.example_donut")
-    def test_pixels_array(self, mock_proxy_widge, mock_donut):
-        widget = mock_donut()
-        widget.save_image('tests.png')
-        assert mock_donut.called
-        # assert mock_proxy_widge.called
+    def test_pixels_array(self,mock_proxy_widget):
+        import numpy as np
+        widget = chart_framework.example_donut()
+        # print(widget.element.chart_info.get_pixels())
+        # img_arr = widget.pixels_array()
+        # print(img_arr)
+        assert not mock_proxy_widget.called
+        
