@@ -48,7 +48,10 @@ class Chart_init(chart_framework.ChartSuperClass):
         if borderColor is None:
             borderColor = color
         self.dataset_name.append(dataset_name)
-        self.labels = data_x
+        if isinstance(data_x,str):
+            self.labels.append(data_x)
+        else:
+            self.labels = data_x
 
         _dataset = utils.dataset(
                         label=dataset_name,

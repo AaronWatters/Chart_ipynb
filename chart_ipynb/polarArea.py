@@ -13,7 +13,7 @@ class PolarArea(chart_setup.Chart_init):
     def __init__(self, options=None, title = None,  *pargs, **kwargs):
         super(PolarArea, self).__init__(title=title, *pargs, **kwargs)
         if options is None:
-            self.options = utils.options(
+            options = utils.options(
 					responsive=True,
                     legend=dict(position="top"),
                     title=dict(display=True, text=self.title),

@@ -5,7 +5,7 @@ from . import utils
 
 class Doughnut(chart_setup.Chart_init):
 
-    title = "Doughnut chart"
+    title = "Doughnut Chart"
     chart_type="doughnut"
 
     def __init__(self, options=None, title = None, *pargs, **kwargs):
