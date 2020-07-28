@@ -71,18 +71,63 @@ class TestChartFramework(unittest.TestCase):
         title = widget.options['title']['text']
         self.assertEqual(title, 'test')
     
-    @patch("jp_proxy_widget.JSProxyWidget")
-    def test_callback(self, mock_proxy_widget):
-        '''
-        not implement yet
-        '''
+    def test_callback(self):
+        widget = chart_framework.ChartSuperClass()
+        arguments = []
+        def print_info():
+            arguments.append('nothing')
+        widget.print_info = print_info
+        widget.click_callback()
+        assert not arguments
+        assert not widget.clicked_info
+
+    def test_off_click(self):
+        widget = chart_framework.ChartSuperClass()
+        arguments = {}
+        def js_init(evt):
+            arguments['off']=True
+        widget.js_init = js_init
+        widget.off_click_event()
+        assert arguments['off']
 
     @patch("jp_proxy_widget.JSProxyWidget")
     def test_pixels_array(self,mock_proxy_widget):
         import numpy as np
-        widget = chart_framework.example_donut()
-        # print(widget.element.chart_info.get_pixels())
-        # img_arr = widget.pixels_array()
-        # print(img_arr)
-        assert not mock_proxy_widget.called
+        widget = chart_framework.ChartSuperClass()
+        widget.element = MagicMock()
+        widget.element.chart_info = MagicMock()
+        class dummy:
+            def sync_value(self):
+                return {'data':'07070707',
+                        'width': 1,
+                        'height': 1}
+        def get_pixels():
+            return dummy()
+        widget.element.chart_info.get_pixels = get_pixels
+        img_arr = widget.pixels_array()
+        assert isinstance(img_arr, np.ndarray)
+        self.assertEqual(img_arr.tolist(), [[[7,7,7,7]]])
+
+    def test_embed_image(self):
+        widget = chart_framework.ChartSuperClass()
+        def pixels_array():
+            import numpy as np
+            return np.ones((10,15,3))
+        widget.pixels_array = pixels_array
+        widget.embed_image()
+
+    def test_save_image(self):
+        import numpy as np
+        widget = chart_framework.ChartSuperClass()
+        def pixels_array():
+            return np.ones((10,15,3))
+        widget.pixels_array = pixels_array
+        import tempfile
+        file = tempfile.NamedTemporaryFile(suffix='.png')
+        widget.save_image(file)
+        response = {}
+        with open(file.name, 'rb') as f:
+            data = {'image': f}
+            response.update(data)
+        assert response['image']
         
