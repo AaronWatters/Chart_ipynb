@@ -82,3 +82,41 @@ class Scatter(chart_setup.Chart_init):
         )
         self.initialize_chart(width, config)
     
+def scatter_chart(title, data, x=None, y=None):
+    '''
+    data format: pd.DataFrame 
+                 or
+                 [{'x': x,'y': y},{'x': x,'y': y},...]
+                 or
+                 {'x': [1,2,3], 'y': [2,4,6]}
+                 or 
+                 {'dataset1':[{'x':1,'y':2},...],
+                  'dataset2':.....}
+    '''
+    chart = Scatter(title=title)
+    if isinstance(data, pd.DataFrame):
+        if x is not None:
+            x = data[label].tolist()
+        if y is not None:
+            y = data[value].tolist()
+        dataset = []
+        for i in range(len(x)):
+            d = {'x':x[i],'y':y[i]}
+            dataset.append(d)
+        chart.add_dataset(dataset,'dataset1')
+    if isinstance(data, dict):
+        if 'x' in data:
+            x = data['x']
+            y = data['y']
+            dataset = []
+            for i in range(len(x)):
+                d = {'x':x[i],'y':y[i]}
+                dataset.append(d)
+            chart.add_dataset(dataset,'dataset1')
+        else:
+            for name, val in data:
+                chart.add_dataset(val, name)
+    if isinstance(data,list):
+        chart.add_dataset(data, 'dataset1')
+    chart.setup()
+    return chart
