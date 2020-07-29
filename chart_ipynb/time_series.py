@@ -187,7 +187,7 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
 
     if not data_provide:   
         if website == 'quandl' and api_key is None:
-            api_key = '1JFowowyzc-FnajAsDkY'
+            api_key = '1JFowowyzc-FnajAsDkY' # noqa
         s_split = [int(d) for d in start.split('-')]
         e_split = [int(d) for d in end.split('-')]
         start = datetime.datetime(s_split[0],s_split[1],s_split[2])

@@ -39,8 +39,8 @@ def config(
         options=None,
         **other_arguments,
     ):
-    if options is None:
-        options = {}
+    if options is None: # noqa
+        options = {}    # noqa
     return clean_dict(
         type=type,
         data=data,
