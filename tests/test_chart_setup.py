@@ -13,6 +13,8 @@ class TestChartInit(unittest.TestCase):
         assert mock_load_requirements.called
         assert widget.title == 'Chart'
         assert widget.chart_type == 'line'
+        widget = chart_setup.Chart_init(title='title')
+        assert widget.title == 'title'
 
     
     def test_add(self):
@@ -37,6 +39,8 @@ class TestChartInit(unittest.TestCase):
                             'borderColor': 'red', 'fill': False}
         self.assertEqual(arguments, expected_dataset)
         assert len(widget.datasets)==1
+        widget.add_dataset('test',1,'test_name', backgroundColor='red')
+        widget.add_dataset('test',1,'test_name', borderColor='red')
 
     def test_get_ready_data(self):
         widget = chart_setup.Chart_init()
@@ -47,6 +51,8 @@ class TestChartInit(unittest.TestCase):
         widget.get_ready_data('test', test_input='test')
         assert arguments['test_input']=='test'
         assert not widget.colors
+        widget.colors='red'
+        widget.get_ready_data('test', test_input='test')
 
     def test_setup(self):
         widget = chart_setup.Chart_init()
@@ -82,6 +88,17 @@ class TestChartInit(unittest.TestCase):
         widget.update_axis_type('x','linear')
         expected_options = {'scales': {'xAxes': [{'type': 'linear'}]}}
         self.assertEqual(widget.options, expected_options)
+        widget.options = {'scales':{'xAxes':[{'type':'test'}]}}
+        widget.update_axis_type('x','linear')
+        self.assertEqual(widget.options, expected_options)
+        widget.options = {'scales':{'xAxes':[{}]}}
+        widget.update_axis_type('x','linear')
+        self.assertEqual(widget.options, expected_options)
+        widget.options = {'scales':{}}
+        widget.update_axis_type('x','linear')
+        self.assertEqual(widget.options, expected_options)
+
+
 
     def test_update_data(self):
         widget = chart_setup.Chart_init()
@@ -100,6 +117,7 @@ class TestChartInit(unittest.TestCase):
                           'add_label': True}
         self.assertEqual(arguments, expected_change)
         assert len(widget.datasets[0]['data'])==2
+        self.assertRaises(ValueError, lambda:widget.update_data(2, 'test2'))
 
     @patch("chart_ipynb.utils.dataset")
     def test_update_dataset(self, mock_dataset):
@@ -107,11 +125,22 @@ class TestChartInit(unittest.TestCase):
         widget.setup()
         widget.update_dataset([1,2,3])
         assert mock_dataset.called
+        widget.update_dataset([1,2,3],backgroundColor='red')
+        widget.update_dataset([1,2,3],borderColor='red')
 
-    def test_remove_data(self):
-        '''
-        not implemented yet
-        '''
+    def test_callback_info(self):
+        widget = chart_setup.Chart_init()
+        widget.datasets = [{'data':[1,2,3]}]
+        widget.labels = ['test1', 'test2', 'test3']
+        mock_info = {'datasetIndex':0, 'dataIndex':0}
+        widget.callback_info(mock_info, remove_label=False, remove_data=True)
+        self.assertEqual(widget.datasets, [{'data': [2, 3]}])
+        self.assertEqual(widget.labels, ['test1', 'test2', 'test3'])
+        widget.datasets = [{'data':[1,2,3]}]
+        widget.labels = ['test1', 'test2', 'test3']
+        widget.callback_info(mock_info, remove_label=True, remove_data=False)
+        self.assertEqual(widget.datasets, [{'data': [2, 3]}])
+        self.assertEqual(widget.labels, ['test2', 'test3'])
 
     def test_remove_dataset(self):
         arguments = {}
