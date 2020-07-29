@@ -29,6 +29,7 @@ class TestLine(unittest.TestCase):
                             'scaleLabel': {'display': True, 'labelString': 'x'}, 
                             'stacked': False}], 
                 'yAxes': [{'display': True, 
-                            'scaleLabel': {'display': True, 'labelString': 'y'}, 
-                'stacked': False}]}}
+                            'scaleLabel': {'display': True, 'labelString': 'y'},
+                            'ticks':{'min':0},
+                            'stacked': False}]}}
         self.assertEqual(options, expected_options)

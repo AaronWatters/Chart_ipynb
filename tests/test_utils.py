@@ -18,9 +18,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_config(self):
-        '''
-        not implement yet
-        '''
+        utils.config()
 
     def test_color_rgb(self):
         mock_name = {'color1':[1,2,3]}
