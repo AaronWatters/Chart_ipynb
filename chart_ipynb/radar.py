@@ -23,4 +23,30 @@ class Radar(chart_setup.Chart_init):
         self.options = options
         self.reset()
 
-    
+def radar_chart(title, data, label=None, value=None, agg=None):
+    '''
+    data format: pd.DataFrame 
+                 or
+                 {'label1': 1, 'label2': 2}
+                 or
+                 {'label':[], 'dataset1':[],...}
+    '''
+    chart = Radar(title=title)
+    if isinstance(data, pd.DataFrame):
+        if (label is not None) & (value is not None):
+            data = data[[label,value]].groupby(label).sum().reset_index()
+            label = data[label].tolist()
+            value = data[value].tolist()
+        chart.add_dataset(label,value,'dataset1')
+    if isinstance(data, dict):
+        if 'label' in data:
+            label = data['label']
+            data.pop('label')
+            for name, val in data:
+                chart.add_dataset(label, val, name)
+        else:
+            label = list(data.keys())
+            value = list(data.values())
+            chart.add_dataset(label,value,'dataset1')
+    chart.setup()
+    return chart

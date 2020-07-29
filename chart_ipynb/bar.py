@@ -18,13 +18,13 @@ class Bar(chart_setup.Chart_init):
                     legend=dict(position="top"),
                     title=dict(display=True, text=self.title),
 					tooltips = dict(mode='index', intersect = False),
-					scales = utils.scales(xAxes=[dict(stacked = stacked)],
-                                          yAxes=[dict(stacked = stacked)])
+					scales = utils.scales(xAxes=[dict(stacked = stacked,)],
+                                          yAxes=[dict(stacked = stacked,ticks = {'min':0}),])
             )
         self.options = options
         self.reset()
 
-def bar_chart(title, data, label=None, value=None):
+def bar_chart(title, data, label=None, value=None, agg=None):
     '''
     data format: pd.DataFrame 
                  or
@@ -35,7 +35,7 @@ def bar_chart(title, data, label=None, value=None):
     chart = Bar(title=title)
     if isinstance(data, pd.DataFrame):
         if (label is not None) & (value is not None):
-            data = data[[label,value]].groupby(label).count().reset_index()
+            data = data[[label,value]].groupby(label).sum().reset_index()
             label = data[label].tolist()
             value = data[value].tolist()
         chart.add_dataset(label,value,'dataset1')

@@ -38,7 +38,7 @@ def doughnut_chart(title, data, label=None, value=None):
     chart = Doughnut(title=title)
     if isinstance(data, pd.DataFrame):
         if (label is not None) & (value is not None):
-            data = data[[label,value]].groupby(label).count().reset_index()
+            data = data[[label,value]].groupby(label).sum().reset_index()
             label = data[label].tolist()
             value = data[value].tolist()
             colors = [random.choice(utils.color_name) for i in label]
