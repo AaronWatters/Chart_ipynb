@@ -286,10 +286,10 @@ colorName = {
 
 def color_rgb(color_name, opaque=1):
     if not isinstance(color_name,str):
-        return 
+        raise ValueError 
     color_name = color_name.lower()
     if color_name not in colorName:
-        return 
+        raise KeyError
     [r, g, b] = colorName[color_name]
     return 'rgb(%d, %d, %d, %f)' %(r, g, b, opaque)
 

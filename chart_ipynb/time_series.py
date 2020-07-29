@@ -3,6 +3,12 @@ from . import chart_setup
 from . import utils, line, bar
 import pandas as pd
 import numpy as np
+import pandas_datareader
+import pandas_datareader.data as web
+import datetime
+import time
+import random
+
 
 
 global_label = None
@@ -177,12 +183,6 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
     width: width of the chart  
     **other_arguments: refer to Chart.js
     '''
-    import pandas_datareader
-    import pandas_datareader.data as web
-    import datetime
-    import time
-    import random
-
     global global_label
 
     if not data_provide:   
@@ -195,7 +195,7 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
     else:
         if input_dataset is None or date_col is None:
             print('please enter your data and specify the date column')
-            raise
+            raise ValueError
 
     if axis_label is None:
         axis_label = val_col.capitalize()
@@ -204,7 +204,7 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
         ticker_symbol = [ticker_symbol]
     if multi_axis and len(ticker_symbol) != 2:
         print('multi axis only applies to two datasets')
-        raise
+        raise ValueError
 
     if colors is None:
             if backgroundColor is not None:
