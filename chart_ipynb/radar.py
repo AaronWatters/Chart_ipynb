@@ -42,8 +42,8 @@ def radar_chart(title, data, label=None, value=None, agg=None):
         if 'label' in data:
             label = data['label']
             data.pop('label')
-            for name, val in data:
-                chart.add_dataset(label, val, name)
+            for name in data:
+                chart.add_dataset(label, data[name], name)
         else:
             label = list(data.keys())
             value = list(data.values())

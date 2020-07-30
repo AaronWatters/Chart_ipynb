@@ -48,8 +48,8 @@ def doughnut_chart(title, data, label=None, value=None):
             label = data['label']
             colors = [random.choice(utils.color_name) for i in label]
             data.pop('label')
-            for name, val in data:
-                chart.add_dataset(label, val, name, color=colors)
+            for name in data:
+                chart.add_dataset(label, data[name], name, color=colors)
         else:
             label = list(data.keys())
             colors = [random.choice(utils.color_name) for i in label]

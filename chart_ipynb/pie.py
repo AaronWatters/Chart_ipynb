@@ -29,7 +29,7 @@ def pie_chart(title, data, label=None, value=None):
     chart = Pie(title=title)
     if isinstance(data, pd.DataFrame):
         if (label is not None) & (value is not None):
-            data = data[[label,value]].groupby(label).count().reset_index()
+            data = data[[label,value]].groupby(label).sum().reset_index()
             label = data[label].tolist()
             value = data[value].tolist()
             colors = [random.choice(utils.color_name) for i in label]
@@ -39,8 +39,8 @@ def pie_chart(title, data, label=None, value=None):
             label = data['label']
             colors = [random.choice(utils.color_name) for i in label]
             data.pop('label')
-            for name, val in data:
-                chart.add_dataset(label, val, name, color=colors)
+            for name in data:
+                chart.add_dataset(label, data[name], name, color=colors)
         else:
             label = list(data.keys())
             colors = [random.choice(utils.color_name) for i in label]

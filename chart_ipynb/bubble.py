@@ -32,9 +32,9 @@ def bubble_chart(title, data, x=None, y=None):
     chart = Bubble(title=title)
     if isinstance(data, pd.DataFrame):
         if x is not None:
-            x = data[label].tolist()
+            x = data[x].tolist()
         if y is not None:
-            y = data[value].tolist()
+            y = data[y].tolist()
         dataset = []
         for i in range(len(x)):
             d = {'x':x[i],'y':y[i]}
@@ -50,8 +50,8 @@ def bubble_chart(title, data, x=None, y=None):
                 dataset.append(d)
             chart.add_dataset(dataset,'dataset1')
         else:
-            for name, val in data:
-                chart.add_dataset(val, name)
+            for name in data:
+                chart.add_dataset(data[name], name)
     if isinstance(data,list):
         chart.add_dataset(data, 'dataset1')
     chart.setup()
