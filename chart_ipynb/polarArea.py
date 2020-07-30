@@ -3,6 +3,7 @@ from . import chart_setup
 from . import utils
 import pandas as pd
 import numpy as np
+import random
 
 
 class PolarArea(chart_setup.Chart_init):
