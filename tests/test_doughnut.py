@@ -33,3 +33,12 @@ class TestDoughnut(unittest.TestCase):
                         'title': {'display': True, 'text': 'Chocolate Frosted'}, 
                         'animation': {'animateScale': True, 'animateRotate': True}}}
         self.assertEqual(arguments, expected_config)
+
+    @patch("chart_ipynb.doughnut.Doughnut")
+    def test_line_chart(self,mock_doughnut):
+        import pandas as pd
+        doughnut.doughnut_chart('test',{'t1':1,'t2':2})
+        df = pd.DataFrame({'t':['t1','t2'],'v':[1,1]})
+        doughnut.doughnut_chart('test',df, 't','v')
+        doughnut.doughnut_chart('test',{'label':['t1','t2'],'dataset1':[1,1]})
+        assert mock_doughnut.called

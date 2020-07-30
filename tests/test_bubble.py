@@ -15,3 +15,16 @@ class TestBubble(unittest.TestCase):
         assert mock_options.called
         assert widget.title == 'Bubble Chart'
         assert widget.chart_type == 'bubble'
+
+    @patch("chart_ipynb.bubble.Bubble")
+    def test_scatter_chart(self, mock_bubble):
+        import pandas as pd
+        d1 = pd.DataFrame({'x':[1,3,5],'y':[1,3,5]})
+        d2 = [{'x':1,'y':1},{'x':3,'y':3},{'x':5,'y':5}]
+        d3 = {'x':[1,3,5],'y':[1,3,5]}
+        d4 = {'dataset1':[{'x':1,'y':1},{'x':3,'y':3},{'x':5,'y':5}]}
+        bubble.bubble_chart('t',d1,'x','y')
+        bubble.bubble_chart('t',d2)
+        bubble.bubble_chart('t',d3)
+        bubble.bubble_chart('t',d4)
+        assert mock_bubble.called
