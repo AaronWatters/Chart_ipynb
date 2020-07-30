@@ -17,3 +17,42 @@ class Bubble(scatter.Scatter):
             options = self.default_options()
         self.options = options
         self.reset()
+
+def bubble_chart(title, data, x=None, y=None):
+    '''
+    data format: pd.DataFrame 
+                 or
+                 [{'x': x,'y': y},{'x': x,'y': y},...]
+                 or
+                 {'x': [1,2,3], 'y': [2,4,6]}
+                 or 
+                 {'dataset1':[{'x':1,'y':2},...],
+                  'dataset2':.....}
+    '''
+    chart = Bubble(title=title)
+    if isinstance(data, pd.DataFrame):
+        if x is not None:
+            x = data[x].tolist()
+        if y is not None:
+            y = data[y].tolist()
+        dataset = []
+        for i in range(len(x)):
+            d = {'x':x[i],'y':y[i]}
+            dataset.append(d)
+        chart.add_dataset(dataset,'dataset1')
+    if isinstance(data, dict):
+        if 'x' in data:
+            x = data['x']
+            y = data['y']
+            dataset = []
+            for i in range(len(x)):
+                d = {'x':x[i],'y':y[i]}
+                dataset.append(d)
+            chart.add_dataset(dataset,'dataset1')
+        else:
+            for name in data:
+                chart.add_dataset(data[name], name)
+    if isinstance(data,list):
+        chart.add_dataset(data, 'dataset1')
+    chart.setup()
+    return chart

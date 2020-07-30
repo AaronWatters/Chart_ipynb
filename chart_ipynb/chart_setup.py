@@ -48,7 +48,10 @@ class Chart_init(chart_framework.ChartSuperClass):
         if borderColor is None:
             borderColor = color
         self.dataset_name.append(dataset_name)
-        self.labels = data_x
+        if isinstance(data_x,str):
+            self.labels.append(data_x)
+        else:
+            self.labels = data_x
 
         _dataset = utils.dataset(
                         label=dataset_name,
@@ -107,7 +110,7 @@ class Chart_init(chart_framework.ChartSuperClass):
         if 'scales' in self.options:
             if axis_po in self.options['scales']:
                 if 'type' in self.options['scales'][axis_po][0]:
-                    self.options['scales'][axies_po][0]['type'] = axis_type
+                    self.options['scales'][axis_po][0]['type'] = axis_type
                 else:
                     self.options['scales'][axis_po][0].update({'type':axis_type})
             else:
@@ -127,7 +130,7 @@ class Chart_init(chart_framework.ChartSuperClass):
             label_index = self.labels.index(label)
             if data_value==self.datasets[dataset_index]['data'][label_index]:
                 print("The data has been existed")
-                return
+                raise ValueError
         self.js_init("""
             element.chart_info.chart.config.data.datasets[dataset_index].data.push(data_value);
             if (add_label) {
@@ -168,9 +171,7 @@ class Chart_init(chart_framework.ChartSuperClass):
             element.chart_info.chart.update();
         """, dataset = dataset)
 
-    def remove_data(self):
-
-        def callback_info(info, remove_label, remove_data):
+    def callback_info(self, info, remove_label, remove_data):
             self.remove_item.append(info)
             if remove_data:
                 self.datasets[info['datasetIndex']]['data'].pop(info['dataIndex'])
@@ -180,6 +181,9 @@ class Chart_init(chart_framework.ChartSuperClass):
                 self.labels.pop(info['dataIndex'])
                 for dataset in self.datasets:
                     dataset['data'].pop(info['dataIndex'])
+
+
+    def remove_data(self):
 
 
         self.js_init("""
@@ -238,4 +242,29 @@ class Chart_init(chart_framework.ChartSuperClass):
                 element.chart_info.chart.update();
                 callback_info(remove_info, remove_label, remove_data);
             };
-        """, callback_info = callback_info)
+        """, callback_info = self.callback_info)
+
+    def remove_dataset(self, dataset_name):
+
+        if dataset_name not in self.dataset_name:
+            print('no such dataset')
+            return 
+        dataset_idx = self.dataset_name.index(dataset_name)
+
+        self.js_init("""
+            var canvas = element.chart_info.canvas;
+            var chart = element.chart_info.chart;
+            console.log(chart);
+            var chart_config = chart.config;
+            var datasets = chart_config.data.datasets;
+            var dataset = datasets[dataset_index];
+            
+            datasets.splice(dataset_index,1);
+            element.chart_info.chart.update();
+            remove_callback(dataset);
+        """, dataset_index = dataset_idx, remove_callback = remove_callback)
+        self.datasets.pop(dataset_idx)
+        self.dataset_name.pop(dataset_idx)
+    
+def remove_callback(info):
+        print(info)

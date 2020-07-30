@@ -8,6 +8,7 @@ as jupyter widgets.
 from . import local_files
 from . import utils
 import jp_proxy_widget
+from IPython.display import display
 
 required_javascript_modules = [
     local_files.vendor_path("js/Chart.js"),
@@ -61,12 +62,12 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
             };
         """, width=width, config=config)
 
+    def print_info(self, info):
+        self.clicked_info.append(info)
+        # print(info)
+
     def click_callback(self, callback=None):
 
-        def print_info(info):
-            self.clicked_info.append(info)
-            # print(info)
-        
         self.js_init("""
             var canvas = element.chart_info.canvas;
             var chart = element.chart_info.chart;
@@ -93,9 +94,9 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
                 info.label = chart_config.data.labels[index];
                 info.dataValue = dataset.data[index];
                 print_info(info);
-                click_callback(info);
+                click_call(info);
             };
-        """, click_callback = callback, print_info=print_info)
+        """, click_call = callback, print_info=self.print_info)
 
     def off_click_event(self):
         self.js_init("""

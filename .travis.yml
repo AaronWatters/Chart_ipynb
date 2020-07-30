@@ -1,0 +1,15 @@
+language: python
+python:
+- 3.6
+install:
+  - sudo apt-get -y update
+  - pip install -r requirements.txt
+  - python setup.py install
+  - pip install nose
+  - pip install unittest
+  - pip install codecov
+script:
+  #- nosetests
+  nosetests --with-coverage
+after_success:
+  - codecov
