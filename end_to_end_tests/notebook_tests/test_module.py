@@ -2,6 +2,7 @@
 # Put the widget inside a module so we can hide the test string from the notebook source
 
 import chart_ipynb
+from chart_ipynb import chart_framework
 from IPython.display import display
 import ipywidgets as widgets
 
@@ -20,7 +21,6 @@ def get_a_button():
 test_string = "THIS IS THE SECRET TEST STRING"
 
 def get_a_widget():
-    result = "print out sth"
-#     result.value = test_string
-    display(result)
+    widget = chart_framework.example_donut()
     display(test_string)
+    display(widget)

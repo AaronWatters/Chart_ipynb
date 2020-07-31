@@ -75,6 +75,7 @@ describe("headless browser tests", async () => {
         const path = "notebooks/notebook_tests/example.ipynb";
         const confirm_selector = "div.modal-dialog button.btn-danger";
         const widget_selector = ".p-Widget";
+        const chart_selector = ".chartjs-render-monitor";
         const container_selector = "#notebook-container";
         //const container_selector = "html";  // debug: whole page
         const restart_clear_selector = "#restart_clear_output a";
@@ -110,6 +111,7 @@ describe("headless browser tests", async () => {
         await wait_until_there(page, container_selector, secret_label);
         console.log("Verify that test_string appears in widget output")
         await wait_until_there(page, container_selector, test_string);
+        await find_and_click2(page, chart_selector, true);
         // debug::
         await substring_exists(page, container_selector, "xyz not there for debug only xyz")
         // success!
