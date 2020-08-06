@@ -9,6 +9,7 @@ class Chart_init(chart_framework.ChartSuperClass):
 
     title = 'Chart'
     chart_type = 'line'
+    config = None
 
     def __init__(self, options=None, title = None, *pargs, **kwargs):
         super(Chart_init, self).__init__(*pargs, **kwargs)
@@ -91,6 +92,7 @@ class Chart_init(chart_framework.ChartSuperClass):
             options=self.options,
             **other_arguments,
         )
+        self.config = config
         self.initialize_chart(width, config)
 
     def reset(self):
