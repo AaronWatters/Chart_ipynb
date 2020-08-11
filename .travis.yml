@@ -4,9 +4,9 @@ python:
 install:
   - sudo apt-get -y update
   - pip install -r requirements.txt
+  - pip install pandas
   - python setup.py install
   - pip install nose
-  - pip install unittest
   - pip install codecov
 script:
   #- nosetests
