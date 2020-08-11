@@ -98,7 +98,12 @@ class TestChartInit(unittest.TestCase):
         widget.update_axis_type('x','linear')
         self.assertEqual(widget.options, expected_options)
 
-
+    def test_set_axisLabel(self):
+        widget = chart_setup.Chart_init()
+        widget.options = {'scales':{}}
+        widget.set_axisLabel('x','test')
+        expected_options = {'scales': {'xAxes': [{'scaleLabel':{'display':True,'labelString':'test'}}]}}
+        self.assertEqual(widget.options, expected_options)
 
     def test_update_data(self):
         widget = chart_setup.Chart_init()
