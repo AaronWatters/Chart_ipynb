@@ -18,5 +18,5 @@ streamlit run file.py
 
 For example:
 ```
-streamlit run example_chart.py
+streamlit run example_chart_covid19.py
 ```
