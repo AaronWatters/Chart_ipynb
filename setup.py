@@ -20,7 +20,6 @@ setup(
         "datetime", 
         "numpy", 
         "pandas",
-        #"random",
         "pandas_datareader", 
         "pillow", 
         "imageio",
