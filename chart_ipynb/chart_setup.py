@@ -120,6 +120,26 @@ class Chart_init(chart_framework.ChartSuperClass):
         else:
             self.options.update({'scales':{axis_po:[{'type':axis_type}]}})
 
+    def set_axisLabel(self, axis, label):
+        axis_name = {'x': 'xAxes', 'y': 'yAxes'}
+        axis_po = axis_name[axis]
+        if 'scales' in self.options:
+            if axis_po in self.options['scales']:
+                if 'scaleLabel' in self.options['scales'][axis_po][0]:
+                    self.options['scales'][axis_po][0]['scaleLabel']['labelString']= label
+                else:
+                    self.options['scales'][axis_po][0]['scaleLabel'] = {
+                                                                'display': True,
+                                                                'labelString': label
+                                                                }
+            else:
+                self.options['scales'].update({axis_po:[{'scaleLabel':{'display':True,'labelString':label}}]})
+        else:
+            self.options.update({'scales':{
+                axis_po:[{'scaleLabel':{'display':True,'labelString':label}}]
+            }})
+
+
     def update_data(self, data_value, label, dataset_name = None):
         if dataset_name is None:
             dataset_name = self.dataset_name[0]
@@ -269,4 +289,4 @@ class Chart_init(chart_framework.ChartSuperClass):
         self.dataset_name.pop(dataset_idx)
     
 def remove_callback(info):
-        print(info)
+    print(info) # noqa
