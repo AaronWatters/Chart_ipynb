@@ -147,6 +147,28 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
     def set_title(self, title):
         self.options["title"]["text"] = title
 
+    def config_json(self, config):
+        import json
+        return json.dumps(config)
+
+    def html_script(self, chart):
+        input_config = self.config_json(chart.config)
+        html_chart = """
+            <head>
+            <title>Line Chart</title>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+            </head>
+
+            <body>
+                <canvas id="myChart" width="800" height="500"></canvas>
+                <script>
+                    var ctx = document.getElementById('myChart');
+                    var myChart = new Chart(ctx, %s);
+                </script>
+            </body>
+        """%(input_config)
+        return html_chart
+
 def example_donut():
     "just a test."
     chartColors = dict(
