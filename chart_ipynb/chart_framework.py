@@ -39,9 +39,11 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
         load_requirements(self)
         self.element.html("Uninitialized Chart.js widget.")
         self.clicked_info = []
+        self.width = 800
 
     def initialize_chart(self, width, config):
-
+        
+        self.width = width
         self.js_init("""
             element.empty();
             element.width(width);
@@ -160,13 +162,13 @@ class ChartSuperClass(jp_proxy_widget.JSProxyWidget):
             </head>
 
             <body>
-                <canvas id="myChart" width="800" height="500"></canvas>
+                <canvas id="myChart" width="%s"></canvas>
                 <script>
                     var ctx = document.getElementById('myChart');
                     var myChart = new Chart(ctx, %s);
                 </script>
             </body>
-        """%(input_config)
+        """%(str(self.width),input_config)
         return html_chart
 
 def example_donut():

@@ -87,4 +87,4 @@ else:
     data = get_data(cum, df.reset_index(), states, start, end)
     input_dataset = [data[s] for s in states]
     html_script = draw_chart('line', states, col, input_dataset)
-    components.html(html_script,width=800, height=600)
+    components.html(html_script,width=700, height=600)
