@@ -26,6 +26,11 @@ def data_format(dataset, val_col, data_provide = False, date_col=None):
                 print('please specify the date column')
                 raise
         idx_reset_df = dataset.reset_index(drop=True)
+        if not data_provide:
+            idx_reset_df = dataset.reset_index()
+        else:
+            if dataset.index.name == date_col:
+                idx_reset_df = dataset.reset_index()
         data = idx_reset_df[[val_col, date_col]]
         sort_df = idx_reset_df.sort_values(by=date_col)
         sort_df[date_col]=sort_df[date_col].astype(str)
@@ -202,6 +207,8 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
 
     if isinstance(ticker_symbol, str):
         ticker_symbol = [ticker_symbol]
+        if not isinstance(input_dataset, list):
+            input_dataset = [input_dataset]
     if multi_axis and len(ticker_symbol) != 2:
         print('multi axis only applies to two datasets')
         raise ValueError
@@ -232,6 +239,8 @@ def time_series_Chart(_chart_type, ticker_symbol, val_col, date_col = None, star
         result = bar.Bar(options = options, stacked=stacked, title=title)
 
     if data_provide:
+        if date_col not in input_dataset[0].columns:
+            input_dataset = [d.reset_index() for d in input_dataset]
         global_label = list(input_dataset[np.argmax([input_dataset[i].shape[0] for i in range(len(input_dataset))])][date_col].values)
 
     for i in range(len(ticker_symbol)):
